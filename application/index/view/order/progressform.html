@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <!--<link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">-->
+</head>
+<body>
+
+<div class="box">
+    <span>订单号：{$order.id}</span>
+    <hr>
+</div>
+<form class="layui-form" style="padding: 20px 30px 0 0;" lay-filter="progress">
+    <div class="layui-form-item layui-hide">
+        <input type="text" name="id" value="{$order.id}">
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="text" name="current" value="{$order.progress}">
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">当前</label>
+            <div class="layui-input-inline">
+                <input readonly type="text" class="layui-input" id="current" style="background-color:transparent;border: 0">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color: red">*</span>流转至</label>
+        <div class="layui-input-block">
+            <select name="progress" id="progress" lay-verify="required">
+                {volist name="list" id="p"}
+                <option value="{$p.value}" {$p.disabled}>{$p.value} | {$p.content} | {$p.role}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">说明</label>
+        <div class="layui-input-block">
+            <textarea name="content" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="submit" id="submit">
+    </div>
+</form>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form'],function () {
+        let form=layui.form,
+            $=layui.$;
+
+        form.val("progress",{
+            'progress':'{$order.progress}'
+        });
+
+        $.ajax({
+            data:{
+                'value':'{$order.progress}'
+            },
+            url:'/index/order/getProDetail',
+            type:'POST',
+            success:(res)=>{
+                let current=res.value+" | "+res.content+" | "+res.role;
+                $('#current').val(current);
+            }
+        });
+    })
+</script>
+<style>
+    .box{
+        padding: 10px 20px 0 20px;
+    }
+</style>
+</body>
+</html>

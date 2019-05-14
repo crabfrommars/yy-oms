@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑用户</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="edit-user" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">工号</label>
+        <div class="layui-input-inline">
+            <input name="id" type="text" class="layui-input" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input name="name" type="text" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色</label>
+        <div id="roles" class="layui-input-block">
+            {volist name="roles" id="role"}
+            <input type="checkbox" name="role" value="{$role.id}" title="{$role.name}">
+            {/volist}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-layout-admin">
+        <div class="layui-input-block">
+            <div class="layui-footer" style="left: 0;">
+                <button type="button" class="layui-btn layui-btn-normal" lay-submit lay-filter="submit">提交</button>
+                <button id="close" type="reset" class="layui-btn layui-btn-primary">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form;
+
+        let index = parent.layer.getFrameIndex(window.name);
+        $('#close').click(function () {
+            parent.layer.close(index);
+        });
+
+        function getUser() {
+            $.ajax({
+                url:'/index/user/getUser',
+                type:'POST',
+                data:{
+                    'id':'{$id}'
+                },
+                success:(res)=>{
+
+                    $.each(res.roles,function (i,item) {
+                        $(":checkbox[name='role'][value='"+item.id+"']").attr("checked","checked")
+                    });
+                    form.render(null,'edit-user');
+                    form.val("edit-user",{
+                        "id":res.id,
+                        "name":res.name,
+                        "remark":res.remark
+                    });
+                }
+            })
+        }
+
+        getUser();
+
+        form.on('submit(submit)',function (data) {
+            let arrRole=[];
+            $(":checkbox[name='role']:checked").each(function () {
+                arrRole.push($(this).val())
+            });
+            // let v=arrRole.length>0?arrRole.join(','):"";
+            data.field.role=arrRole;
+            console.log(data.field);
+            $.ajax({
+                url:'/index/user/update',
+                type:'POST',
+                data:data.field,
+                success:(res)=>{
+                    // console.log(res);
+                    parent.layer.msg(res.msg);
+                    parent.layui.table.reload('users');
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

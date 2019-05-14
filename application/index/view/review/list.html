@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>管理评审单</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class=" layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">评审单编号</label>
+                    <div class="layui-input-block">
+                        <input id="review_id" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="review-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <table id="review" class="layui-table" lay-filter="review"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="status">
+    {{# if(d.status === 0){ }}
+    <div style="color: #5FB878;">
+        <i class="layui-icon layui-icon-auz"></i>
+        <span>已过审</span>
+    </div>
+    {{# }else{ }}
+    <div style="color: #FF5722;">
+        <i class="layui-icon layui-icon-tips"></i>
+        <span>未过审</span>
+    </div>
+    {{# } }}
+</script>
+<script type="text/html" id="toolbar">
+    <a class="layui-btn layui-btn-xs" lay-event="check">查看</a>
+    {{# if(d.status === 0){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-disabled">编辑</a>
+    {{# }else{ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+    {{# } }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['table','form'],function () {
+        let table=layui.table
+            , form=layui.form
+            , $=layui.$;
+        
+        form.on('submit(review-search)',function (data) {
+            let field=data.field;
+
+            table.reload('review',{
+                where:field
+                , page:{
+                    curr:1
+                }
+            })
+        });
+
+        $("#review_id").focus();
+        $("#review_id").keydown(function (e) {
+            if (e.keyCode === 13){
+                $("#search").click();
+            }
+        });
+
+        table.render({
+            elem:'#review'
+            , page:{
+                limit:20
+                , limits:[10,20,30]
+                , groups:5
+
+            }
+            , url:'/index/review/sel'
+            , cols:[[
+                {field:'id', title:'编号', width:60, align:'center'}
+                , {field:'order_id', title:'订单号', width:80, align:'center'}
+                , {field:'customer', title:'客户', width:250}
+                , {field:'description',title:'型号(描述)', width:300}
+                , {title:'状态', width:100, templet:'#status'}
+                , {title:'操作', fixed:'right', width:170, align:'center', toolbar:'#toolbar'}
+            ]]
+        });
+
+        table.on('tool(review)',function (obj) {
+            let data=obj.data;
+
+            if (obj.event === 'edit'){
+                let win=layer.open({
+                    type:2
+                    , title:'编辑评审单'
+                    , content:'/index/review/renderEdt?id='+data.id
+                    , area:['600px','600px']
+                });
+                layer.full(win);
+            }else if (obj.event === 'check'){
+                let win=layer.open({
+                    type:2
+                    , title:'查看评审单'
+                    , content:'/index/review/renderCheck?id='+data.id
+                });
+                layer.full(win);
+            } else if (obj.event === 'del'){
+                console.log('删除操作')
+            }
+        })
+    })
+</script>
+</body>
+</html>

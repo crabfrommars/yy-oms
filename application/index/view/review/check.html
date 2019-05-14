@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>查看评审单</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-row">
+    <div class="layui-col-md10 layui-col-md-offset1">
+        <table class="layui-table my-table">
+            <colgroup>
+                <col width="10%">
+                <col width="23%">
+                <col width="10%">
+                <col width="23%">
+                <col width="10%">
+                <col width="24%">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="my-label">关联订单号</td>
+                <td class="my-value">{$review.order_id}</td>
+                <td class="my-label">客户名</td>
+                <td class="my-value">{$review.customer}</td>
+                <td class="my-label">项目名</td>
+                <td class="my-value">{$review.project_name}</td>
+            </tr>
+            <tr>
+                <td class= "my-label">申请人</td>
+                <td class="my-value">{$review.applicant}</td>
+                <td class="my-label">申请部门</td>
+                <td class="my-value">{$review.app_department}</td>
+                <td class="my-label">申请日期</td>
+                <td class="my-value">{$review.app_date}</td>
+            </tr>
+            <tr>
+                <td class="my-label">量产时间</td>
+                <td class="my-value" colspan="2">{$review.pro_time}</td>
+                <td class="my-label">量产规模</td>
+                <td class="my-value" colspan="2">{$review.pro_scale}</td>
+            </tr>
+            <tr>
+                <td class="my-label">型号(描述)</td>
+                <td class="my-value" colspan="2">{$review.description}</td>
+                <td class="my-label">目标售价</td>
+                <td class="my-value" colspan="2">{$review.price}</td>
+            </tr>
+            <tr>
+                <td class="my-label">项目背景</td>
+                <td class="my-value" colspan="5">{$review.project_bg}</td>
+            </tr>
+            <tr>
+                <td class= "my-label">销售经理</td>
+                <td class="my-value">{$review.sale_manager}</td>
+                <td class="my-label">销售部</td>
+                <td class="my-value">{$review.sale_department}</td>
+                <td class="my-label">市场部</td>
+                <td class="my-value">{$review.marketing_department}</td>
+            </tr>
+            <tr>
+                <td class="my-label">应用场景</td>
+                <td class="my-value" colspan="5">{$review.situation}</td>
+            </tr>
+            <tr>
+                <td class= "my-label">额定电压</td>
+                <td class="my-value">{$review.vol}</td>
+                <td class="my-label">额定电流</td>
+                <td class="my-value">{$review.amp}</td>
+                <td class="my-label">额定电压</td>
+                <td class="my-value">{$review.power}</td>
+            </tr>
+            <tr>
+                <td class="my-label">技术要求</td>
+                <td class="my-value" colspan="5">{$review.tech_req}</td>
+            </tr>
+            <tr>
+                <td class="my-label">客户要求</td>
+                <td class="my-value" colspan="5">{$review.customer_req}</td>
+            </tr>
+            <tr>
+                <td class="my-label">项目分析</td>
+                <td class="my-value" colspan="5">{$review.project_ana}</td>
+            </tr>
+            <tr>
+                <td class="my-label">开发时间</td>
+                <td class="my-value" colspan="2">{$review.dev_time}</td>
+                <td class="my-label">优先级</td>
+                <td class="my-value" colspan="2">{$review.priority}</td>
+            </tr>
+            <tr>
+                <td class= "my-label">项目经理</td>
+                <td class="my-value">{$review.project_manager}</td>
+                <td class="my-label">销售部</td>
+                <td class="my-value">{$review.dev_department}</td>
+                <td class="my-label">市场部</td>
+                <td class="my-value">{$review.sign_time}</td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="layui-input-block">
+    <div class="my-footer" style="left: 0;">
+        <button id="pass" type="button" class="layui-btn">
+
+        </button>
+        <button id="cancle" class="layui-btn layui-btn-primary">取消</button>
+    </div>
+</div>
+
+<script>
+    layui.use(['table'],function () {
+        let table=layui.table
+            , $=layui.$
+            , index = parent.layer.getFrameIndex(window.name);
+
+        if ('{$review.status}' === '0'){
+            $("#pass").addClass("layui-btn-disabled");
+            $("#pass").attr("disabled","disabled");
+            $("#pass").append("<i class='layui-icon layui-icon-ok'></i>已过审")
+        }else {
+            $("#pass").append("<i class='layui-icon layui-icon-auz'></i>过审")
+        }
+
+        $("#pass").click(function () {
+            layer.confirm(
+            '确定过审吗？过审后将无法更改'
+            , {
+                icon:3
+                , title:'确认'
+            }
+            , function (index) {
+                $.ajax({
+                    url:'/index/review/pass'
+                    , data:{
+                        'id':'{$review.id}'
+                    }
+                    , type:'POST'
+                    , success:(res)=>{
+                        if (res.code === 0){
+                            parent.layer.msg(res.msg,{
+                                icon:1
+                            })
+                        } else if (res.code === 1){
+                            parent.layer.msg(res.msg,{
+                                icon:2
+                            })
+                        }
+                        parent.layer.close(index);
+                        parent.layui.table.reload('review');
+                    }
+                });
+                layer.close(index);
+            })
+        });
+
+        $("#cancle").click(function () {
+            parent.layer.close(index);
+        });
+    })
+</script>
+
+<style>
+    .my-table{
+        margin: 0 auto;
+        width: 95%;
+    }
+    .my-label{
+        text-align: right;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .my-value{
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .my-footer{
+        padding-top: 10px;
+        text-align: center;
+        height: 50px;
+        width: 100%;
+        background-color: #fff;
+        position: fixed;
+        bottom: 0;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑评审单</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            评审单编号：{$review.id}
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form" lay-filter="insert" id="" style="padding: 20px 30px 0 0;">
+                <div class="layui-form-item layui-hide">
+                    <input type="text" name="id" value="{$review.id}">
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>关联订单号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="order_id" value="{$review.order_id}" readonly>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>客户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="customer" value="{$review.customer}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>项目名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="project_name" value="{$review.project_name}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>申请人</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="applicant" value="{$review.applicant}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>申请部门</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="app_department" value="{$review.app_department}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">申请日期</label>
+                        <div class="layui-input-inline">
+                            <input id="app_date" type="text" class="layui-input" lay-verify="required" name="app_date" value="{$review.app_date}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>量产时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="pro_time" value="{$review.pro_time}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>量产规模</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="pro_scale" value="{$review.pro_scale}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>型号(描述)</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="description" value="{$review.description}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>目标售价</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="price" placeholder="¥" value="{$review.price}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label"><span class="my-must">*</span>项目背景</label>
+                    <div class="layui-input-block">
+                        <textarea name="project_bg" class="layui-textarea" lay-verify="required">{$review.project_bg}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline layui-col-md-offset1">
+                        <div class="layui-input-inline">
+                            <button id="sale_manager" class="layui-btn layui-btn-danger"></button>
+                        </div>
+                        <div class="layui-input-inline">
+                            <button id="sale_department" class="layui-btn layui-btn-danger">销售部签发</button>
+                        </div>
+                        <div class="layui-input-inline">
+                            <button id="marketing_department" class="layui-btn layui-btn-danger">市场部签发</button>
+                        </div>
+                    </div>
+                </div>
+
+                技术要求
+                <hr>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="my-must">*</span>应用场景</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" lay-verify="required" name="situation" value="{$review.situation}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>额定电压</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="vol" value="{$review.vol}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>额定电流</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="amp" value="{$review.amp}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="my-must">*</span>额定功率</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" lay-verify="required" name="power" value="{$review.power}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label"><span class="my-must">*</span>技术要求</label>
+                    <div class="layui-input-block">
+                        <textarea name="tech_req" class="layui-textarea" lay-verify="required">{$review.tech_req}</textarea>
+                    </div>
+                </div>
+                客户附加要求
+                <hr>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">客户要求</label>
+                    <div class="layui-input-block">
+                        <textarea name="customer_req" class="layui-textarea">{$review.customer_req}</textarea>
+                    </div>
+                </div>
+                技术部意见
+                <hr>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">项目分析</label>
+                    <div class="layui-input-block">
+                        <textarea name="project_ana" class="layui-textarea">{$review.project_ana}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开发时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="dev_time" value="{$review.dev_time}">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">优先级</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="priority" value="{$review.priority}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline layui-col-md-offset1">
+                        <div class="layui-input-inline">
+                            <button id="project_manager" class="layui-btn layui-btn-danger">项目经理签发</button>
+                        </div>
+                        <div class="layui-input-inline">
+                            <button id="dev_department" class="layui-btn layui-btn-danger">研发部签发</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-layout-admin">
+                    <div class="layui-input-block">
+                        <div class="layui-footer" style="left: 0;">
+                            <button type="button" class="layui-btn layui-btn-normal" lay-submit lay-filter="submit">保存</button>
+                            <button id="cancle" type="button" class="layui-btn layui-btn-primary">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form','laydate'],function () {
+        let form=layui.form
+            , laydate=layui.laydate
+            , $=layui.$
+            , index = parent.layer.getFrameIndex(window.name);
+        
+        if ('{$review.sale_manager}' === ''){
+            $("#sale_manager").append("销售经理签发");
+        } else {
+            $("#sale_manager").attr("disabled","disabled");
+            $("#sale_manager").addClass("layui-btn-disabled");
+            $("#sale_manager").append("已签发-销售经理：{$review.sale_manager}");
+        }
+
+        // $("#sale_manager").click(function () {
+        //
+        // });
+        // $("#sale_department").click();
+        // $("#marketing_department").click();
+        // $("#project_manager").click();
+        // $("#dev_department").click();
+
+        $('#cancle').click(function () {
+            parent.layer.close(index);
+        });
+
+        laydate.render({
+            elem:'#app_date'
+        });
+
+        form.on('submit(submit)',function (data) {
+            let field=data.field;
+            // console.log(field);
+            $.ajax({
+                url:'/index/review/edt'
+                , data:field
+                , type:'POST'
+                , success:(res)=>{
+                    if (res.code === 0){
+                        parent.layer.msg(res.msg,{icon:1});
+                        parent.layui.table.reload("review");
+                        parent.layer.close(index);
+                    } else {
+                        parent.layer.msg(res.msg,{icon:0});
+                    }
+                }
+            })
+        });
+    })
+</script>
+<style>
+    .my-must{
+        color:red;
+    }
+</style>
+</body>
+</html>

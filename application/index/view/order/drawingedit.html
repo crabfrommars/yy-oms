@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div id="editForm" class="layui-form" style="padding: 20px 30px 0 0;" lay-filter="drawingEdit">
+    <div class="layui-form-item">
+        <label class="layui-form-label">编号</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="id" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="path" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit id="cover" lay-filter="cover">上传</button>
+            <button class="layui-btn layui-btn-warm" id="delete">删除文件</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','upload','layer'],function () {
+        var form=layui.form
+            ,upload=layui.upload
+            ,layer=layui.layer
+            ,$=layui.$;
+        //渲染upload组件
+        upload.render({
+            elem:'#cover'
+            , url:'/index/drawing/cover'
+            , data:{
+                'id':'{$data.id}',
+                'path':'{$data.path}'
+            }
+            , done:function (res,index,upload) {
+                form.val('drawingEdit',{
+                    "path":res.data.path
+                });
+                layer.msg(res.msg);
+            }
+            , accept:'file'
+            , exts:'pdf'
+        });
+
+        //为表单赋值
+        form.val('drawingEdit',{
+            "id":"{$data.id}"
+            , "path":"{$data.path}"
+        });
+
+        //监听删除文件操作
+        $('#delete').click(function () {
+            layer.confirm('确定吗删除？',{icon:3,title:'提示'},function (index) {
+                $.ajax({
+                    data:{
+                        'id':'{$data.id}'
+                        ,'path':'{$data.    path}'
+                    },
+                    type:'POST',
+                    url:'/index/drawing/delFileOnly',
+                    success:function (res) {
+                        layer.msg(res.msg);
+                        form.val('drawingEdit',{
+                            "path":""
+                        });
+                    }
+                });
+                layer.close(index);
+            });
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md10 layui-col-md-offset1" style="padding-top: 30px">
+            <i class="layui-icon layui-icon-face-cry" style="font-size: 30px; color: #FF5722;"></i>
+            <h3 style="color: #FF5722;">抱歉，你没有相应的权限~</h3>
+        </div>
+    </div>
+</div>
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form'],function () {
+        let form=layui.form,
+            $=layui.$;
+
+    })
+</script>
+</body>
+</html>

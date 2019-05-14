@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>创建订单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">复制订单号</label>
+                    <div class="layui-input-inline">
+                        <input id="copy_order" type="text" class="layui-input" placeholder="输入要复制的订单编号">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button id="confirm_target" class="layui-btn layui-btn-normal">确定</button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <form id="layuiadmin-form-order" class="layui-form" lay-filter="layuiadmin-form-order" style="padding: 20px 30px 0 0;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>产品类型</label>
+                        <div class="layui-input-inline">
+                            <select name="pro_type" id="pro_type">
+                                <option value="电动车类应用">电动车类应用</option>
+                                <option value="新产品应用">新产品应用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>订单类型</label>
+                        <div class="layui-input-inline">
+                            <select name="order_type" id="order_type" lay-filter="orderType">
+                                <option value="成品单" selected>成品单</option>
+                                <option value="样品单">样品单</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>指定审核人</label>
+                        <div class="layui-input-inline">
+                            <select name="appoint_auditor" id="appoint_auditor">
+                                <option value="项小成">项小成</option>
+                                <option value="莫刚强">莫刚强</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="nec">*</span>客户名</label>
+                    <div class="layui-input-block">
+                        <input lay-verify="required" type="text" name="customer" class="layui-input" placeholder="请输入准确的客户名">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="nec">*</span>业务员</label>
+                    <div class="layui-input-inline">
+                        <input lay-verify="required" type="text" name="salesman" class="layui-input" placeholder="业务员">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>型号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="model" lay-verify="required" placeholder="型号" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>数量</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="quantity" lay-verify="required" placeholder="订单数量" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">交期</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="delivery" lay-verify="required" placeholder="交期" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>外壳类型</label>
+                        <div class="layui-input-inline">
+                            <select id="shell_type" name="shell_type"></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>外壳颜色</label>
+                        <div class="layui-input-inline">
+                            <select id="shell_color" name="shell_color"></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">挡板类型</label>
+                        <div class="layui-input-inline">
+                            <select name="baffle" id="baffle">
+                                <option value="无">无</option>
+                                <option value="默认">默认</option>
+                                <option value="无字">无字</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>MOS管</label>
+                        <div class="layui-input-inline">
+                            <select id="mos" name="mos" lay-verify="required" lay-search="">
+                                <option value="">--未选择--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>板卡</label>
+                        <div class="layui-input-inline">
+                            <select id="board" name="board" lay-verify="required" lay-search="">
+                                <option value="">--未选择--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>电机类型</label>
+                        <div class="layui-input-inline">
+                            <select lay-verify="required" name="elect_machine" id="elect_machine">
+                                <option value="">--未选择--</option>
+                                <option value="差速电机">差速电机</option>
+                                <option value="轮毂电机">轮毂电机</option>
+                                <option value="中置电机">中置电机</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">线束标签</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_label" id="wire_label">
+                                <option value="无">无</option>
+                                <option value="接插件小标签">接插件小标签</option>
+                                <option value="线束大标签">线束大标签</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">外壳标签</label>
+                        <div class="layui-input-inline">
+                            <select name="shell_label" id="shell_label">
+                                <option value="无">无</option>
+                                <option value="宇扬版本">宇扬版本</option>
+                                <option value="客户版本">客户版本</option>
+                                <option value="特定格式">特定格式</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>额定电压1</label>
+                        <div class="layui-input-inline">
+                            <input lay-verify="required" type="number" class="layui-input" id="vol1" name="vol1" placeholder="额定电压1" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>额定电流1</label>
+                        <div class="layui-input-inline">
+                            <input lay-verify="required" type="number" class="layui-input" id="amp1" name="amp1" placeholder="额定电流1" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>欠压值1</label>
+                        <div class="layui-input-inline">
+                            <input lay-verify="required" type="number" class="layui-input" id="undervoltage1" name="undervoltage1" placeholder="欠压值1" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">额定电压2</label>
+                        <div class="layui-input-inline">
+                            <input type="number" class="layui-input" id="vol2" name="vol2" placeholder="额定电压2" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">额定电流2</label>
+                        <div class="layui-input-inline">
+                            <input type="number" class="layui-input" id="amp2" name="amp2" placeholder="额定电流2" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">欠压值2</label>
+                        <div class="layui-input-inline">
+                            <input type="number" class="layui-input" id="undervoltage2" name="undervoltage2" placeholder="欠压值2" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>额定功率</label>
+                        <div class="layui-input-inline">
+                            <input lay-verify="required" type="number" class="layui-input" id="power" name="power" placeholder="额定功率" onkeyup="myMatch(this)">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">蓝牙</label>
+                        <div class="layui-input-inline">
+                            <select name="bluetooth" id="bluetooth">
+                                <option value="无">无</option>
+                                <option value="-X 无模块">-X 无模块</option>
+                                <option value="-B 二代模块">-B 二代模块</option>
+                                <option value="-B 三代模块">-B 三代模块</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>测试相序</label>
+                        <div class="layui-input-inline">
+                            <select name="phase" id="phase">
+                                <option value="宇扬公版">宇扬公版</option>
+                                <option value="尤奈特">尤奈特</option>
+                                <option value="巨杰">巨杰</option>
+                                <option value="全顺">全顺</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>线束外露长度</label>
+                        <div class="layui-input-inline">
+                            <select lay-verify="required" name="length" id="length">
+                                <option value="">--未选择--</option>
+                                <option value="无">无</option>
+                                <option value="15CM">15CM</option>
+                                <option value="20CM">20CM</option>
+                                <option value="25CM">25CM</option>
+                                <option value="30CM">30CM</option>
+                                <option value="35CM">35CM</option>
+                                <option value="40CM">40CM</option>
+                                <option value="45CM">45CM</option>
+                                <option value="50CM">50CM</option>
+                                <option value="55CM">55CM</option>
+                                <option value="60CM">60CM</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">水冷</label>
+                        <div class="layui-input-inline">
+                            <input type="radio" name="is_water" value="1" title="是">
+                            <input type="radio" name="is_water" value="2" title="否" checked="">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">线束可拆装</label>
+                        <div class="layui-input-inline">
+                            <input type="radio" name="is_wire" value="1" title="是">
+                            <input type="radio" name="is_wire" value="2" title="否" checked="">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="nec">*</span>常规功能</label>
+                    <div id="normal_func" class="layui-input-block">
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">巡航</label>
+                        <div class="layui-input-inline">
+                            <select name="func_cruise" id="func_cruise">
+                                <option value="无">无</option>
+                                <option value="自动巡航">自动巡航</option>
+                                <option value="手动巡航">手动巡航</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">软硬启</label>
+                        <div class="layui-input-inline">
+                            <select name="func_soft_hard" id="func_soft_hard">
+                                <option value="无">无</option>
+                                <option value="硬启动">硬启动</option>
+                                <option value="软硬启可选">软硬启可选</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">三挡</label>
+                        <div class="layui-input-inline">
+                            <select name="func_gear" id="func_gear">
+                                <option value="无">无</option>
+                                <option value="拨动三档">拨动三档</option>
+                                <option value="点动三档">点动三档</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">特殊功能</label>
+                    <div id="special_func" class="layui-input-block">
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>线束类型</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_type" id="wire_type">
+                                <option value="宇扬标准">宇扬标准</option>
+                                <option value="客户定制">客户定制</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">图纸编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="drawing_func_wires_num" id="drawing_func_wires_num">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span class="nec">*</span>线束</label>
+                        <div id="wires" class="layui-input-block">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">电机霍尔线</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_holzer" id="wire_holzer">
+                                <option value="无">无</option>
+                                <option value="普通">普通</option>
+                                <option value="防水">防水</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">电门锁线</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_elect_lock" id="wire_elect_lock">
+                                <option value="无">无</option>
+                                <option value="子弹头">子弹头</option>
+                                <option value="圆片">圆片</option>
+                                <option value="内接">内接</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">防盗线</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_guard" id="wire_guard">
+                                <option value="无">无</option>
+                                <option value="3+2">3+2</option>
+                                <option value="5芯">5芯</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">倒车</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_reverse" id="wire_reverse">
+                                <option value="无">无</option>
+                                <option value="空挡倒车">空挡倒车</option>
+                                <option value="倒车">倒车</option>
+                                <option value="前进倒车">前进倒车</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">三挡</label>
+                        <div class="layui-input-inline">
+                            <select name="wire_gear" id="wire_gear">
+                                <option value="无">无</option>
+                                <option value="拨动三档">拨动三档</option>
+                                <option value="点动三档">点动三档</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">业务备注</label>
+                    <div class="layui-input-block">
+                        <textarea id="remark" name="remark" class="layui-textarea"></textarea>
+                        <div id="contentwordage"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item" lay-filter="layuiadmin-form-order" id="layuiadmin-form-review" style="padding: 20px 30px 0 0;">
+                </div>
+                <div class="layui-form-item layui-layout-admin">
+                    <div class="layui-input-block">
+                        <div class="layui-footer" style="left: 0;">
+                            <button type="button" class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
+                            <button id="my-reset" type="button" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    // 只允许1位小数点
+    function myMatch(e){
+        e.value=e.value.toString().match(/^\d+(?:\.\d{0,1})?/)
+    }
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function () {
+        let $ = layui.$
+            , admin = layui.admin
+            , form = layui.form;
+
+        function checkRemark()
+        {
+            let limitNum = 500;
+            let pattern = '还可以输入' + limitNum + '字符';
+            $('#contentwordage').html(pattern);
+            let remain = $("#remark").val().length;
+            if(remain > 500){
+                pattern = "字数超过限制！";
+                $('#contentwordage').attr('style','color:red')
+            }else{
+                var result = limitNum - remain;
+                pattern = '还可以输入' + result + '字符';
+                $('#contentwordage').removeAttr('style','color:red')
+            }
+            $('#contentwordage').html(pattern);
+        }
+
+        $("#my-reset").click(function () {
+            $("#layuiadmin-form-order")[0].reset();
+            checkRemark();
+        });
+
+        $("#copy_order").focus();
+        $("#copy_order").keydown(function (e) {
+            if (e.keyCode === 13){
+                $("#confirm_target").click();
+            }
+        });
+        $("#confirm_target").click(function () {
+            $.ajax({
+                url:'/index/order/getOrder'
+                , data:{
+                    'id':$("#copy_order").val()
+                }
+                , type:'POST'
+                , success:(res)=>{
+                    if (res.code === 1){
+                        layer.msg(res.msg,{
+                            icon:5
+                        })
+                    } else {
+                        layer.msg('操作成功',{
+                            icon:1
+                        });
+                        form.val('layuiadmin-form-order',{
+                            "pro_type":res.pro_type
+                            , "order_type":res.order_type
+                            , "appoint_auditor":res.appoint_auditor
+                            , "customer":res.customer
+                            , "model":res.model
+                            , "quantity":res.quantity
+                            , "delivery":res.delivery
+                            , "shell_type":res.shell_type
+                            , "shell_color":res.shell_color
+                            , "baffle":res.baffle
+                            , "mos":res.mos
+                            , "board":res.board
+                            , "elect_machine":res.elect_machine
+                            , "wire_label":res.wire_label
+                            , "shell_label":res.shell_label
+                            , "vol1":res.vol1
+                            , "amp1":res.amp1
+                            , "undervoltage1":res.undervoltage1
+                            , "vol2":res.vol2
+                            , "amp2":res.amp2
+                            , "undervoltage2":res.undervoltage2
+                            , "power":res.power
+                            , "bluetooth":res.bluetooth
+                            , "phase":res.phase
+                            , "length":res.length
+                            , "is_water":res.is_water
+                            , "is_wire":res.is_wire
+                            , "func_cruise":res.func_cruise
+                            , "func_soft_hard":res.func_soft_hard
+                            , "func_gear":res.func_gear
+                            , "wire_type":res.wire_type
+                            , "drawing_func_wires_num":res.drawing_func_wires_num
+                            , "wire_holzer":res.wire_holzer
+                            , "wire_elect_lock":res.wire_elect_lock
+                            , "wire_guard":res.wire_guard
+                            , "wire_reverse":res.wire_reverse
+                            , "wire_gear":res.wire_gear
+                            , "remark":res.remark
+                        });
+
+                        checkRemark();
+                    }
+                }
+            })
+        });
+
+        // 获取选项列表
+        function getOptions()
+        {
+            $.ajax({
+                url:'/index/order/getOptions',
+                success:(res)=>{
+                    for (let i=0;i<res.shell_type.length;i++){
+                        $("#shell_type").append("<option value='"+res.shell_type[i].value+"'>"+res.shell_type[i].text+"</option>");
+                    }
+                    for (let i=0;i<res.shell_color.length;i++){
+                        $("#shell_color").append("<option value='"+res.shell_color[i].value+"'>"+res.shell_color[i].text+"</option>");
+                    }
+                    for (let i=0;i<res.mos.length;i++){
+                        $("#mos").append("<option value='"+res.mos[i].value+"'>"+res.mos[i].text+"</option>");
+                    }
+                    for (let i=0;i<res.board.length;i++){
+                        $("#board").append("<option value='"+res.board[i].value+"'>"+res.board[i].text+"</option>");
+                    }
+                    for (let i=0;i<res.normal_func.length;i++){
+                        $("#normal_func").append("<input type='checkbox' name='normal_func' title='"+res.normal_func[i].text+"' value='"+res.normal_func[i].value+"'>");
+                    }
+                    for (let i=0;i<res.special_func.length;i++){
+                        $("#special_func").append("<input type='checkbox' name='special_func' title='"+res.special_func[i].text+"' value='"+res.special_func[i].value+"'>");
+                    }
+                    for (let i=0;i<res.wires.length;i++){
+                        $("#wires").append("<input type='checkbox' name='wires' title='"+res.wires[i].text+"' value='"+res.wires[i].value+"'>");
+                    }
+                    form.render()
+                }
+            })
+        }
+        getOptions();
+
+        // 监听备注输入
+        $(document).ready(function(){
+            let limitNum = 500;
+            let pattern = '还可以输入' + limitNum + '字符';
+            $('#contentwordage').html(pattern);
+
+            $('#remark').keyup(
+                function(){
+                    let remain = $(this).val().length;
+                    if(remain > 500){
+                        pattern = "字数超过限制！";
+                        $('#contentwordage').attr('style','color:red')
+                    }else{
+                        let result = limitNum - remain;
+                        pattern = '还可以输入' + result + '字符';
+                        $('#contentwordage').removeAttr('style','color:red')
+                    }
+                    $('#contentwordage').html(pattern);
+                }
+            );
+        });
+
+        form.on('submit(submit)', function (data) {
+            if($('#remark').val().length > 500){
+                layer.msg('备注字符超过限定长度！请删减',{
+                    icon:5
+                });
+                return
+            }
+          let arr1=[];
+          let arr2=[];
+          let arr3=[];
+
+          $("input:checkbox[name=normal_func]:checked").each(function(){
+            arr1.push($(this).val())
+          });
+          $("input:checkbox[name=special_func]:checked").each(function(){
+            arr2.push($(this).val())
+          });
+          $("input:checkbox[name=wires]:checked").each(function(){
+            arr3.push($(this).val())
+          });
+
+          let v1=arr1.length>0?arr1.join(','):"";
+          let v2=arr2.length>0?arr2.join(','):"";
+          let v3=arr3.length>0?arr3.join(','):"";
+
+          data.field.normal_func=v1;
+          data.field.special_func=v2;
+          data.field.wires=v3;
+            // console.log(data.field);
+            $.ajax({
+                url: '/index/order/insert'
+                , data: data.field
+                , type: 'POST'
+                , success: function (data) {
+                    layer.alert(data.message);
+                }
+            })
+        });
+
+    })
+</script>
+<style>
+    .nec{
+        color: red;
+    }
+</style>
+</body>

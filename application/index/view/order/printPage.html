@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>打印页</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body style="margin-bottom: 50px">
+
+<div class="layui-row">
+    <div class="layui-col-md8 layui-col-md-offset2">
+        <div class="my-container">
+            <table class="layui-table my-table">
+                <colgroup>
+                    <col width="10%">
+                    <col width="23%">
+                    <col width="10%">
+                    <col width="23%">
+                    <col width="10%">
+                    <col width="24%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="6"><i class="layui-icon layui-icon-form"></i>{$order.id}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                </tr>
+                <tr>
+                    <td class="my-label">加工厂</td>
+                    <td class="my-value">{$order.factory}</td>
+                    <td class="my-label">图纸编号</td>
+                    <td class="my-value">{$order.drawing_func_wires_num}</td>
+                    <td class="my-label">BOM编号</td>
+                    <td class="my-value">{$order.bom_id}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">当前进度</td>
+                    <td class="my-value">{$order.progress}</td>
+                    <td class="my-label">产品类型</td>
+                    <td class="my-value">{$order.pro_type}</td>
+                    <td class="my-label">订单类型</td>
+                    <td class="my-value">{$order.order_type}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">本单T6号</td>
+                    <td class="my-value">{$order.this_t6}</td>
+                    <td class="my-label">母单T6号</td>
+                    <td class="my-value">{$order.mother_t6}</td>
+                    <td class="my-label">确认交期</td>
+                    <td class="my-value">{$order.delivery}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">业务员</td>
+                    <td class="my-value">{$order.salesman}</td>
+                    <td class="my-label">数量</td>
+                    <td class="my-value">{$order.quantity}</td>
+                    <td class="my-label">期望交期</td>
+                    <td class="my-value">{$order.delivery}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">客户名</td>
+                    <td class="my-value" colspan="2">{$order.customer}</td>
+                    <td class="my-label">序列号</td>
+                    <td class="my-value" colspan="2">{$order.serial_start}-{$order.serial_end}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">客户/订单型号</td>
+                    <td class="my-value" colspan="2">{$order.model}</td>
+                    <td class="my-label">生产/归档型号</td>
+                    <td class="my-value" colspan="2">{$order.model}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">外壳类型</td>
+                    <td class="my-value" colspan="2">{$order.shell_type}</td>
+                    <td class="my-label">功率电阻R27</td>
+                    <td class="my-value" colspan="2">{$order.r27}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">外壳颜色</td>
+                    <td class="my-value" colspan="2">{$order.shell_color}</td>
+                    <td class="my-label">功率电阻R4</td>
+                    <td class="my-value" colspan="2">{$order.r4}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">挡板类型</td>
+                    <td class="my-value" colspan="2">{$order.baffle}</td>
+                    <td class="my-label">高频电解电容</td>
+                    <td class="my-value" colspan="2">{$order.electrolytic_capacitor}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">MOS管</td>
+                    <td class="my-value" colspan="2">{$order.mos}</td>
+                    <td class="my-label">高温线径</td>
+                    <td class="my-value" colspan="2">{$order.diameter}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">板卡</td>
+                    <td class="my-value" colspan="2">{$order.board}</td>
+                    <td class="my-label">线束标签</td>
+                    <td class="my-value" colspan="2">{$order.wire_label}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">电机类型</td>
+                    <td class="my-value" colspan="2">{$order.elect_machine}</td>
+                    <td class="my-label">外壳标签</td>
+                    <td class="my-value" colspan="2">{$order.shell_label}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">额定电压1</td>
+                    <td class="my-value">{$order.vol1}V</td>
+                    <td class="my-label">额定电流1</td>
+                    <td class="my-value">{$order.amp1}A</td>
+                    <td class="my-label">欠压值1</td>
+                    <td class="my-value">{$order.undervoltage1}V</td>
+                </tr>
+                <tr>
+                    <td class="my-label">额定电压2</td>
+                    <td class="my-value">{$order.vol2}V</td>
+                    <td class="my-label">额定电流2</td>
+                    <td class="my-value">{$order.amp2}A</td>
+                    <td class="my-label">欠压值2</td>
+                    <td class="my-value">{$order.undervoltage2}V</td>
+                </tr>
+                <tr>
+                    <td class="my-label">额定功率</td>
+                    <td class="my-value">{$order.power}W</td>
+                    <td class="my-label">蓝牙</td>
+                    <td class="my-value">{$order.bluetooth}</td>
+                    <td class="my-label">线束外露</td>
+                    <td class="my-value">{$order.length}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">测试相序</td>
+                    <td class="my-value">{$order.phase}</td>
+                    <td class="my-label">水冷</td>
+                    <td class="my-value">{$order.is_water}</td>
+                    <td class="my-label">线束可拆装</td>
+                    <td class="my-value">{$order.is_wire}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">软件名</td>
+                    <td class="my-value" colspan="5">{$order.software}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">常规功能</td>
+                    <td class="my-value" colspan="5">{$order.normal_func}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">三挡</td>
+                    <td class="my-value">{$order.func_gear}</td>
+                    <td class="my-label">巡航</td>
+                    <td class="my-value">{$order.func_cruise}</td>
+                    <td class="my-label">软硬启</td>
+                    <td class="my-value">{$order.func_soft_hard}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">特殊功能</td>
+                    <td class="my-value" colspan="5">{$order.special_func}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">线束类型</td>
+                    <td class="my-value" colspan="5">{$order.wire_type}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">线束</td>
+                    <td class="my-value" colspan="5">{$order.wires}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">电机霍尔线</td>
+                    <td class="my-value">{$order.wire_holzer}</td>
+                    <td class="my-label">电门锁线</td>
+                    <td class="my-value">{$order.wire_elect_lock}</td>
+                    <td class="my-label">防盗线</td>
+                    <td class="my-value">{$order.wire_guard}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">倒车线</td>
+                    <td class="my-value">{$order.wire_reverse}</td>
+                    <td class="my-label">三挡线</td>
+                    <td class="my-value">{$order.wire_gear}</td>
+                    <td class="my-label"></td>
+                    <td class="my-value"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-next"></div>
+
+        <div class="my-container">
+            <table class="layui-table my-table">
+                <colgroup>
+                    <col width="10%">
+                    <col width="23%">
+                    <col width="10%">
+                    <col width="23%">
+                    <col width="10%">
+                    <col width="24%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="6"><i class="layui-icon layui-icon-form"></i>{$order.id}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="my-label">销售备注</td>
+                    <td class="my-value" colspan="5">{$order.remark}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">研发备注</td>
+                    <td class="my-value" colspan="5">{$order.remark_tech}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">生产备注</td>
+                    <td class="my-value" colspan="5">{$order.remark_production}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="layui-input-block no-print">
+    <div class="my-footer" style="left: 0;">
+        <button id="print" type="button" class="layui-btn layui-btn-normal">
+            <i class="layui-icon layui-icon-read"></i>打印
+        </button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['table'],function () {
+        var table=layui.table
+            ,$=layui.$;
+
+        $("#print").click(function () {
+            window.print();
+        });
+    })
+</script>
+
+<style type="text/css">
+    .my-container{
+        padding-top: 15px;
+    }
+    .my-table{
+        margin: 0 auto;
+        width: 95%;
+        height: 95%;
+    }
+    .my-label{
+        text-align: right;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .my-value{
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .my-footer{
+        padding-top: 10px;
+        text-align: center;
+        height: 50px;
+        width: 100%;
+        background-color: #fff;
+        position: fixed;
+        bottom: 0;
+    }
+</style>
+<style media="print" type="text/css">
+    .no-print{
+        display: none;
+    }
+    .page-next{
+        page-break-after: always;
+    }
+</style>
+</body>
+</html>

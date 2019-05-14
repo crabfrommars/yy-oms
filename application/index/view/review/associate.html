@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>关联订单</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body style="background-color: #fff">
+
+<div class="layui-fluid">
+    <table id="orders" class="layui-table" lay-filter="orders"></table>
+</div>
+<!--<div class="layui-form-item layui-layout-admin">-->
+    <!--<div class="layui-input-block">-->
+        <!--<div class="layui-footer" style="left: 0;">-->
+            <!--<button id="submit" type="button" class="layui-btn" lay-submit lay-filter="submit">提交</button>-->
+            <!--<button id="cancle" type="button" class="layui-btn layui-btn-primary">取消</button>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<script>
+    layui.use(['table','form'],function () {
+        let table=layui.table
+            , form=layui.form
+            , $=layui.$;
+        let index = parent.layer.getFrameIndex(window.name);
+        // let order=null;
+
+        $('#cancle').click(function () {
+            parent.layer.close(index);
+        });
+
+        table.render({
+            elem:'#orders'
+            , page:{
+                limit:20
+                , limits:[10,20,30]
+                , groups:5
+            }
+            , url:'/index/order/getOrders'
+            , cols:[[
+                {type:'radio', title:'选择'}
+                , {field:'id', title:'编号', width:60, align:'center'}
+                , {field:'customer', title:'客户', width:250}
+            ]]
+        });
+
+        // table.on('radio(orders)',function (obj) {
+        //     order=obj.data;
+        // });
+
+        // form.on('submit(submit)',function (data) {
+        //     if (order !== null){
+        //         console.log(order.customer);
+        //         window.parent.document.getElementsByName('customer').val('呵呵');
+        //     } else {
+        //         console.log('未选择，请检查')
+        //     }
+        // })
+    })
+</script>
+</body>
+</html>

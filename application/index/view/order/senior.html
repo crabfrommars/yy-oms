@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>高级</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="box">
+    <span>订单号：{$order.id}</span>
+    <hr>
+</div>
+
+<form class="layui-form" lay-filter="senior">
+    <div class="layui-form-item">
+        <label class="layui-form-label">母单</label>
+        <div class="layui-input-block">
+            <input id="mother" type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_mother">
+        </div>
+        <span class="layui-badge-rim">注：订单为翻单，或当前账户无相应权限时，无法设为母单</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">挂起</label>
+        <div class="layui-input-block">
+            <input id="hold" type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_hold" disabled>
+        </div>
+    </div>
+</form>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form'], function () {
+        let $ = layui.$
+            , form=layui.form;
+
+        // 当前是否为母单赋值
+        if ('{$order.is_mother}' == 1){
+            $("#mother").attr("checked","checked");
+            form.render(null,'senior');
+        }
+
+        // 翻单不可设为母单
+        if ('{$order.order_type}' === '翻单'){
+            $("#mother").attr("disabled","disabled");
+            form.render(null,'senior');
+        }
+
+        // 拥有设为母单的权限才可操作母单设置
+        $.ajax({
+            url:'/index/user/haveRight'
+            , data:{
+                'reqRight':'mother_order'
+            }
+            , type:'POST'
+            , success:(res)=>{
+                if (!res){
+                    $("#mother").attr("disabled","disabled");
+                    form.render(null,'senior');
+                }
+            }
+        });
+
+        form.on('switch(is_mother)',function (data) {
+            $.ajax({
+                url:'/index/user/haveRight'
+                , data:{
+                    'reqRight':'mother_order'
+                }
+                , type:'POST'
+                , success:(res)=>{
+                    if (res){
+                        let isMother=0;
+                        if (this.checked) {
+                            isMother=1;
+                        }
+                        $.ajax({
+                            url:'/index/order/update'
+                            , data:{
+                                'id':'{$order.id}'
+                                , 'is_mother':isMother
+                            }
+                            , type:'POST'
+                            , success:(res)=>{
+                                if (res.status === 1){
+                                    layer.msg(res.message,{icon:1})
+                                } else if(res.status === 0){
+                                    layer.msg(res.message,{icon:2})
+                                }
+                            }
+                        });
+                    } else {
+                        layer.msg('你没有相应的权限',{icon:2});
+                        form.render(null,'senior')
+                    }
+                }
+            });
+        })
+    });
+</script>
+
+<style>
+    .box{
+        padding: 10px 20px 0 20px;
+    }
+</style>
+</body>
+</html>

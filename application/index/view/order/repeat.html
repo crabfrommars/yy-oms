@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>翻单</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">翻单订单号</label>
+                    <div class="layui-input-inline">
+                        <input id="mother_id" type="text" class="layui-input" placeholder="输入要翻的订单号">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button id="confirm" class="layui-btn layui-btn-normal">确定</button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form" lay-filter="repeat" style="padding: 20px 30px 0 0;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">母单编号</label>
+                        <div class="layui-input-inline">
+                            <input name="mother_id" type="text" class="layui-input" readonly lay-verify="required">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">母单T6号</label>
+                        <div class="layui-input-inline">
+                            <input name="mother_t6" type="text" class="layui-input" readonly lay-verify="required">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">客户名</label>
+                        <div class="layui-input-inline">
+                            <input name="customer" type="text" class="layui-input" readonly lay-verify="required">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">型号</label>
+                        <div class="layui-input-inline">
+                            <input name="model" type="text" class="layui-input" readonly lay-verify="required">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span style="color: red">*</span>数量</label>
+                        <div class="layui-input-inline">
+                            <input name="quantity" type="text" class="layui-input" lay-verify="required|number">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-layout-admin">
+                    <div class="layui-input-block">
+                        <div class="layui-footer" style="left: 0;">
+                            <button type="button" class="layui-btn" lay-submit lay-filter="submit">提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'],function () {
+        let form=layui.form
+            , $=layui.$;
+
+        $("#mother_id").focus();
+        $("#mother_id").keydown(function (e) {
+            if (e.keyCode === 13){
+                $("#confirm").click();
+            }
+        });
+        $("#confirm").click(function () {
+            $.ajax({
+               url:'/index/order/canRepeat'
+               , data:{
+                   'id':$("#mother_id").val()
+                }
+               , type:'POST'
+               , success:(res)=>{
+                   if (res.code === 0){
+                       layer.msg(res.msg,{icon:1});
+                       form.val('repeat',{
+                           "mother_id":res.order.id
+                           , "mother_t6":res.order.this_t6
+                           , "customer":res.order.customer
+                           , "model":res.order.model
+                       });
+                   } else {
+                       layer.msg(res.msg,{icon:2})
+                   }
+                }
+            });
+        });
+        
+        form.on('submit(submit)',function (data) {
+            layer.confirm('确定提交吗？',{icon:3},function (index) {
+                layer.close(index);
+                let field=data.field;
+                console.log(field);
+                $.ajax({
+                    url:'/index/order/canRepeat'
+                    , data:{
+                        'id':field.mother_id
+                    }
+                    , type:'POST'
+                    , success:(res)=>{
+                        if (res.code === 0){
+                            let order=res.order;
+                            $.ajax({
+                                url:'/index/order/insert'
+                                , type:'POST'
+                                , data:{
+                                    "factory":order.factory
+                                    , "pro_type":order.pro_type
+                                    , "order_type":"翻单" // 订单类型改为翻单
+                                    , "appoint_auditor":order.appoint_auditor
+                                    , "customer":order.customer
+                                    , "salesman":order.salesman
+                                    , "model":order.model
+                                    , "quantity":field.quantity // 数量改为当前表单的数量
+                                    , "delivery":order.delivery
+                                    , "serial_start":null // 起始序列号清零
+                                    , "serial_end":null // 末尾序列号清零
+                                    , "this_t6":null // 本单T6号清零
+                                    , "mother_t6":field.mother_t6 // 母单T6号改为当前表单的母单T6号
+                                    , "shell_type":order.shell_type
+                                    , "shell_color":order.shell_color
+                                    , "baffle":order.baffle
+                                    , "mos":order.mos
+                                    , "board":order.board
+                                    , "elect_machine":order.elect_machine
+                                    , "wire_label":order.wire_label
+                                    , "shell_label":order.shell_label
+                                    , "vol1":order.vol1
+                                    , "amp1":order.amp1
+                                    , "undervoltage1":order.undervoltage1
+                                    , "vol2":order.vol2
+                                    , "amp2":order.amp2
+                                    , "undervoltage2":order.undervoltage2
+                                    , "power":order.power
+                                    , "bluetooth":order.bluetooth
+                                    , "diameter":order.diameter
+                                    , "phase":order.phase
+                                    , "length":order.length
+                                    , "is_water":order.is_water
+                                    , "is_wire":order.is_wire
+                                    , "r27":order.r27
+                                    , "r4":order.r4
+                                    , "electrolytic_capacitor":order.electrolytic_capacitor
+                                    , "software":order.software
+                                    , "normal_func":order.normal_func
+                                    , "func_cruise":order.func_cruise
+                                    , "func_soft_hard":order.func_soft_hard
+                                    , "func_gear":order.func_gear
+                                    , "special_func":order.special_func
+                                    , "wire_type":order.wire_type
+                                    , "drawing_func_wires_num":order.drawing_func_wires_num
+                                    , "bom_id":order.bom_id
+                                    , "wires":order.wires
+                                    , "wire_holzer":order.wire_holzer
+                                    , "wire_elect_lock":order.wire_elect_lock
+                                    , "wire_guard":order.wire_guard
+                                    , "wire_reverse":order.wire_reverse
+                                    , "wire_gear":order.wire_gear
+                                    , "remark":order.remark
+                                    , "remark_tech":order.remark_tech
+                                    , "remark_production":order.remark_production
+                                    , "is_mother":0 // 母单清零
+                                    , "progress":"30%" // 进度改为30%
+                                    , "review_id":order.review_id
+                                }
+                                , success:(res)=>{
+                                    layer.msg(res.message,{icon:0});
+                                }
+                            });
+                        } else {
+                            layer.msg(res.msg,{icon:2})
+                        }
+                    }
+                });
+            });
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <!--<link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">-->
+</head>
+<body>
+
+<div class="box">
+    <span>订单号：{$order_id}</span>
+    <hr>
+    <ul class="layui-timeline">
+        {volist name="list" id="data"}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{$data.create_time}</h3>
+                <p><span class="t">操作：</span>{$data.action}</p>
+                <hr>
+                <p><span class="t">说明：</span>{$data.content}</p>
+                <hr>
+                <p><span class="t">人员：</span>{$data.personnel}</p>
+            </div>
+        </li>
+        {/volist}
+    </ul>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([], function () {
+
+    });
+</script>
+<style>
+    .box{
+        padding: 10px 20px;
+    }
+    .t{
+        color: #393D49;
+    }
+</style>
+</body>
+</html>

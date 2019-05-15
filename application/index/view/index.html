@@ -46,10 +46,9 @@
           <li class="layui-nav-item">
             <span class="layui-badge-rim layui-bg-cyan">{$Think.session.roles}</span>
           </li>
+
           <li class="layui-nav-item" lay-unselect>
-            <a href="javascript:;">
-              <cite>{$Think.session.name}</cite>
-            </a>
+            <a href="javascript:;">{$Think.session.name}</a>
             <dl class="layui-nav-child">
               <dd><a lay-href="/index/user/info">基本资料</a></dd>
               <dd><a lay-href="/index/user/info">修改密码</a></dd>
@@ -117,7 +116,7 @@
                 <dd data-name="workorder" id="manage_order">
                   <a lay-href="/index/app/workorder">订单管理</a>
                 </dd>
-                <dd data-name="workorder" id="order_repeat">
+                <dd data-name="repeat" id="order_repeat">
                   <a lay-href="/index/order/renderRepeat">翻单</a>
                 </dd>
                 <dd data-name="drawing" id="manage_drawing">

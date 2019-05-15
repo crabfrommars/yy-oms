@@ -440,6 +440,7 @@
             , admin = layui.admin
             , form = layui.form;
 
+        // 重置备注区域的字数限制
         function checkRemark()
         {
             let limitNum = 500;
@@ -450,15 +451,22 @@
                 pattern = "字数超过限制！";
                 $('#contentwordage').attr('style','color:red')
             }else{
-                var result = limitNum - remain;
+                let result = limitNum - remain;
                 pattern = '还可以输入' + result + '字符';
                 $('#contentwordage').removeAttr('style','color:red')
             }
             $('#contentwordage').html(pattern);
         }
 
+        // 清空所有复选框
+        function clearCheckbox()
+        {
+            $(":checkbox").prop("checked",false);
+        }
+
         $("#my-reset").click(function () {
             $("#layuiadmin-form-order")[0].reset();
+            clearCheckbox();
             checkRemark();
         });
 
@@ -484,6 +492,28 @@
                         layer.msg('操作成功',{
                             icon:1
                         });
+
+                        clearCheckbox();
+                        if (res.normal_func != "") {
+                            let arr1 = res.normal_func.split(',');
+                            $.each(arr1, function (i, item) {
+                                $("input[name='normal_func'][value=" + item + "]").prop("checked", true);
+                            })
+                        }
+
+                        if (res.special_func != "") {
+                            let arr2 = res.special_func.split(',');
+                            $.each(arr2, function (i, item) {
+                                $("input[name='special_func'][value=" + item + "]").prop("checked", "checked")
+                            })
+                        }
+
+                        if (res.wires != "") {
+                            let arr3 = res.wires.split(',');
+                            $.each(arr3, function (i, item) {
+                                $("input[name='wires'][value=" + item + "]").prop("checked", "checked")
+                            })
+                        }
                         form.val('layuiadmin-form-order',{
                             "pro_type":res.pro_type
                             , "order_type":res.order_type

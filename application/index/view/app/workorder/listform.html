@@ -624,21 +624,21 @@
                     if (res.order.normal_func != "") {
                         let arr1 = res.order.normal_func.split(',');
                         $.each(arr1, function (i, item) {
-                            $("input[name='normal_func'][value=" + item + "]").attr("checked", "checked")
+                            $("input[name='normal_func'][value=" + item + "]").prop("checked", true)
                         })
                     }
 
                     if (res.order.special_func != "") {
                         let arr2 = res.order.special_func.split(',');
                         $.each(arr2, function (i, item) {
-                            $("input[name='special_func'][value=" + item + "]").attr("checked", "checked")
+                            $("input[name='special_func'][value=" + item + "]").prop("checked", true)
                         })
                     }
 
                     if (res.order.wires != "") {
                         let arr3 = res.order.wires.split(',');
                         $.each(arr3, function (i, item) {
-                            $("input[name='wires'][value=" + item + "]").attr("checked", "checked")
+                            $("input[name='wires'][value=" + item + "]").prop("checked", true)
                         })
                     }
 

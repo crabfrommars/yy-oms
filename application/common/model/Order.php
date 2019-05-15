@@ -26,8 +26,8 @@ class Order extends Model
     {
         $current_charge=[
             '1001'=>'项小成'
-            ,'1003'=>'莫刚强'
-            ,'1063'=>'解宜江'
+            , '1003'=>'莫刚强'
+            , '1063'=>'解宜江'
         ];
         return $current_charge[$value];
     }

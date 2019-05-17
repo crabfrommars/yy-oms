@@ -27,6 +27,9 @@
                         <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                     </button>
                 </div>
+                <div class="layui-inline">
+                    <button id="test2">测试</button>
+                </div>
             </div>
         </div>
         <div class="layui-card-body">
@@ -102,6 +105,13 @@
                     curr: 1 //重新从第一页开始
                 }
             });
+        });
+
+        $("#test2").click(function () {
+            $.ajax({
+                url:'/index/socket/test'
+
+            })
         });
     });
 </script>

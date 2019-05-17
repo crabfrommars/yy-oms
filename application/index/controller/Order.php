@@ -516,7 +516,10 @@ class Order extends Base
 
     public function test()
     {
-
+        $data=Request::request('num');
+        Session::set('num',$data);
+        $res=Session::get('num');
+        return $res;
     }
 
 }

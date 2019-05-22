@@ -36,7 +36,7 @@
                         <i class="layui-icon layui-icon-refresh-3"></i>
                     </a>
                 </li>
-                <button id="test">测试</button>
+<!--                <button id="test">测试</button>-->
                 <!--<li class="layui-nav-item layui-hide-xs" lay-unselect>-->
                 <!--<input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords=">-->
                 <!--</li>-->
@@ -193,109 +193,176 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'util'], function () {
-        var ws=new WebSocket('ws://127.0.0.1:8282')
-            , todoNum=10;
+        var ws = new WebSocket('ws://192.168.0.56:8282')
+            , todoNum = 10;
         let util = layui.util
             , $ = layui.$
-            , myTip=1;
+            , myTip = 1;
 
-        function openMsg()
-        {
-            myTip=layer.tips("你有<span>"+todoNum+"</span>个待处理的订单，前往<a lay-href='/index/app/workorder' style='color: #01AAED'>订单管理</a>查看",'.my-notice',{
-                tips:[3,'#FFB800']
-                , time:5000
+        function openMsg() {
+            myTip = layer.tips("你有<span>" + todoNum + "</span>个待处理的订单，前往<a lay-href='/index/app/workorder' style='color: #01AAED'>订单管理</a>查看", '.my-notice', {
+                tips: [3, '#FFB800']
+                , time: 5000
             })
         }
 
+        function getTodo() {
+            $.ajax({
+                url: '/index/order/sendMsg'
+                , data: {
+                    'uid': '{$Think.session.id}'
+                }
+                , type: 'POST'
+            })
+        }
+
+        window.onload = reqNotify();
+
         // 服务端主动推送消息时会触发这里的onmessage
-        ws.onmessage = function(e){
+        ws.onmessage = function (e) {
             // json数据转换成js对象
-            let data = eval("("+e.data+")");
+            let data = eval("(" + e.data + ")");
             let type = data.type || '';
-            switch(type){
+            switch (type) {
                 // Events.php中返回的init类型的消息，将client_id发给后台进行uid绑定
                 case 'init':
                     // 利用jquery发起ajax请求，将client_id发给后端进行uid绑定
                     $.ajax({
-                       url:'/index/socket/bind'
-                       , data:{
-                           'client_id':data.client_id
+                        url: '/index/socket/bind'
+                        , data: {
+                            'client_id': data.client_id
                         }
-                       , type:'POST'
-                       , dataType:'json'
-                       , success:(res)=>{
-
+                        , type: 'POST'
+                        , dataType: 'json'
+                        , success: (res) => {
+                            getTodo();
                         }
                     });
                     break;
-                case 'minus':
-                    todoNum-=1;
-                    if (todoNum <= 0){
+                case 'todo':
+                    console.log(data);
+                    todoNum = data.num;
+                    if (todoNum <= 0) {
                         $(".my-notice").addClass("layui-hide");
                     } else {
                         $("#todo").html(todoNum);
+                        $(".my-notice").removeClass("layui-hide");
+                        openMsg();
+                        showNotification(todoNum,"todo");
+                        $(".my-notice").hover(function () {
+                            openMsg();
+                        }, function () {
+
+                        })
                     }
                     break;
                 // 当mvc框架调用GatewayClient发消息时直接alert出来
                 default :
-                    // let msg=eval("("+e.data+")");
-                    // console.log(msg);
-                    $(".my-notice").removeClass("layui-hide");
-                    $("#todo").html(todoNum);
-                    $(".my-notice").hover(function () {
-                        openMsg();
-                    },function () {
-                        // layer.close(myTip);
-                    })
+                    layer.alert(e);
             }
         };
 
+        function showNotification(num,_tag) {
+            // window.Notification.permission = "granted";
+            // alert(window.Notification.permission);
+            if (window.Notification) {
+                if (window.Notification.permission == "granted") {
+                    let notification = new Notification('你有一条新信息'
+                        , {
+                            dir: "ltr"
+                            , lang: 'zh-CN'
+                            , body: "你有" + num + "个订单待处理"
+                            , tag: _tag
+                            , icon: "/static/notify.ico"
+                            , requireInteraction:true
+                        });
+                    // setTimeout(function () {
+                    //     notification.close();
+                    // }, 5000);
+                } else {
+                    reqNotify();
+                }
+            } else alert('你的浏览器不支持此消息提示功能，请使用chrome内核的浏览器！');
+        }
+
+        function reqNotify() {
+            if (Notification.permission === 'granted') {
+                console.log('用户允许通知');
+            } else if (Notification.permission === 'denied') {
+                console.log('用户拒绝通知');
+            } else {
+                console.log('用户还没选择，去向用户申请权限吧');
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('用户允许通知啦');
+
+                    } else if (permission === 'denied') {
+                        console.log('用户拒绝通知啦');
+                    }
+                })
+            }
+        }
+
         $("#test").click(function () {
-            $.ajax({
-                url:'/index/socket/sendMsg'
-            })
+            showNotification(5,"todo");
         });
     });
 </script>
 
 <!-- 百度统计 -->
-<script>
-    var _hmt = _hmt || [];
-    (function () {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
+<!--<script>-->
+<!--    var _hmt = _hmt || [];-->
+<!--    (function () {-->
+<!--        var hm = document.createElement("script");-->
+<!--        hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";-->
+<!--        var s = document.getElementsByTagName("script")[0];-->
+<!--        s.parentNode.insertBefore(hm, s);-->
+<!--    })();-->
+<!--</script>-->
 </body>
 <style>
-    @keyframes blink
-    {
-        0%   {opacity: 1;}
-        100% {opacity: 0;}
-    }
-    @-webkit-keyframes blink /* Safari 与 Chrome */
-    {
-        0%   {opacity: 1;}
-        100% {opacity: 0;}
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
     }
 
-    @keyframes colorChange
+    @-webkit-keyframes blink /* Safari 与 Chrome */
     {
-        0%    {background-color: #F0F0F0}
-        100%  {background-color: #FFB800}
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes colorChange {
+        0% {
+            background-color: #F0F0F0
+        }
+        100% {
+            background-color: #FFB800
+        }
     }
 
     @-webkit-keyframes colorChange /* Safari 与 Chrome */
     {
-        0%    {background-color: #F0F0F0}
-        100%  {background-color: #FFB800}
+        0% {
+            background-color: #F0F0F0
+        }
+        100% {
+            background-color: #FFB800
+        }
     }
-    .my-notice{
+
+    .my-notice {
         display: flex;
-        justify-content:center;
-        align-items:center;
+        justify-content: center;
+        align-items: center;
 
         position: fixed;
         z-index: 9999;
@@ -310,13 +377,13 @@
         background-color: #f2f2f2;
 
         animation-name: colorChange;
-        animation-duration: 1s;
+        animation-duration: 800ms;
         animation-direction: alternate;
         animation-timing-function: linear;
         animation-iteration-count: infinite;
 
         -webkit-animation-name: colorChange; /* Safari 与 Chrome */
-        -webkit-animation-duration: 1s; /* Safari 与 Chrome */
+        -webkit-animation-duration: 800ms; /* Safari 与 Chrome */
         -webkit-animation-direction: alternate;
         -webkit-animation-timing-function: linear; /* Safari 与 Chrome */
         -webkit-animation-iteration-count: infinite; /* Safari 与 Chrome */

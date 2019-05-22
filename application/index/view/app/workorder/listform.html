@@ -16,7 +16,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">订单编号</label>
             <div class="layui-input-inline">
-                <input name="id" type="text" class="layui-input" readonly>
+                <input id="orderId" name="id" type="text" class="layui-input" readonly>
             </div>
         </div>
         <div class="layui-inline">
@@ -36,20 +36,23 @@
         <div class="layui-inline">
             <label class="layui-form-label">序列号</label>
             <div class="layui-input-inline" style="width: 150px">
-                <input name="serial_start" type="text" class="layui-input">
+                <input id="serial_start" name="serial_start" type="text" class="layui-input" readonly>
             </div>
             <div class="layui-form-mid">-</div>
             <div class="layui-input-inline" style="width: 150px">
-                <input name="serial_end" type="text" class="layui-input">
+                <input id="serial_end" name="serial_end" type="text" class="layui-input" readonly>
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="color: #FF5722;">加工厂</label>
             <div class="layui-input-inline">
-                <select id="factory" name="factory">
+                <select id="factory" name="factory" lay-filter="factory" lay-verify="required">
                     <option value="">--未选择--</option>
-                    <option value="艾芯">艾芯</option>
-                    <option value="晟楠">晟楠</option>
+                    <option value="A">(A)杭州宇晗科技有限公司</option>
+                    <option value="B">(B)山东艾芯电子科技有限公司</option>
+                    <option value="C">(C)杭州瑞研电子科技有限公司</option>
+                    <option value="D">(D)江苏晟楠电子科技股份有限公司</option>
+                    <option value="Y">(Y)杭州宇扬科技股份有限公司</option>
                 </select>
             </div>
         </div>
@@ -87,7 +90,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">订单类型</label>
             <div class="layui-input-inline">
-                <select name="order_type" class="my-select" lay-filter="orderType">
+                <select name="order_type" class="my-select" readonly>
                     <option value="翻单">翻单</option>
                     <option value="成品单">成品单</option>
                     <option value="样品单">样品单</option>
@@ -128,14 +131,14 @@
         <div class="layui-inline">
             <label class="layui-form-label">数量</label>
             <div class="layui-input-inline">
-                <input type="number" name="quantity" lay-verify="required" placeholder="订单数量" autocomplete="off"
+                <input id="quantity" type="number" name="quantity" lay-verify="required" placeholder="订单数量" autocomplete="off"
                        class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">交期</label>
             <div class="layui-input-inline">
-                <input type="number" name="delivery" lay-verify="required" placeholder="交期" autocomplete="off"
+                <input type="text" name="delivery" lay-verify="required|number" placeholder="交期" autocomplete="off"
                        class="layui-input my-input">
             </div>
         </div>
@@ -582,6 +585,11 @@
         let form = layui.form
             , $ = layui.$
             , index = parent.layer.getFrameIndex(window.name);
+        
+        // 数字前补0
+        function preFixZero(num,n) {
+            return (Array(n).join(0) + num).slice(-n);
+        }
 
         // 翻单禁用部分表单字段
         function setRepeat() {
@@ -590,6 +598,33 @@
                 $(".my-select").attr("disabled", "disabled");
                 form.render(null, 'layuiadmin-form-order');
             }
+        }
+
+        // 设定序列号
+        function setSerial(fCode) {
+            let serialStart='';
+            let serialEnd='';
+            if (fCode !== null && fCode !== ''){
+                let date=new Date();
+                let year=date.getFullYear().toString();
+                // 获取当前年份的最后一位
+                let y=year.substr(year.length-1,1);
+
+                // 获取当前订单编号并补0
+                let orderId=preFixZero($("#orderId").val(),4);
+
+                // 获取当前订单数量
+                let num=$("#quantity").val();
+
+                // 设定起始序列号
+                serialStart=fCode+y+orderId+preFixZero(1,4);
+
+                // 设定末尾序列号
+                serialEnd=fCode+y+orderId+preFixZero(num,4);
+            }
+
+            $("#serial_start").val(serialStart);
+            $("#serial_end").val(serialEnd);
         }
 
         // 获取选项列表
@@ -705,6 +740,17 @@
 
         setRepeat();
         getValues();
+
+        // 监听加工厂选择
+        form.on('select(factory)',function (data) {
+            setSerial(data.value);
+        });
+
+        // 监听数量变化
+        $("#quantity").bind('input propertychange',function () {
+            let fCode=$("#factory").val();
+            setSerial(fCode);
+        });
 
         form.on('submit(submit)', function (data) {
             $.ajax({

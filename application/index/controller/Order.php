@@ -18,6 +18,8 @@ use app\index\controller\User;
 use think\facade\Request;
 use think\facade\Session;
 use think\route\Rule;
+require_once '../GatewayClient/Gateway.php';
+use GatewayClient\Gateway;
 
 class Order extends Base
 {
@@ -174,6 +176,7 @@ class Order extends Base
         //更新订单表的进度值，并且向时间线表中插入新记录
         if (orderModel::update($query1) && Timeline::create($query2)){
             $res=['code'=>0,'msg'=>'操作成功'];
+            $this->sendMsg();
         }else{
             $res=['code'=>1,'msg'=>'操作失败'];
         }
@@ -214,6 +217,7 @@ class Order extends Base
                 'content'=>'无',
                 'personnel'=>Session::get('name')
             ]);
+            $this->sendMsg();
             return ['message'=>'创建成功，订单号为'.$order->id];
         }else{
             return ['message'=>'创建失败，请检查'];
@@ -512,6 +516,52 @@ class Order extends Base
     public function renderRepeat()
     {
         return $this->view->fetch('/order/repeat');
+    }
+
+    public function sendMsg()
+    {
+        $uid=Request::request('uid');
+        $counts=0;
+        if (isset($uid)){
+            $user=userModel::get($uid);
+            $roles=$user->roles;
+            foreach ($roles as $role){
+                $progress=Progress::where('role',$role->id)->select();
+                foreach ($progress as $p){
+                    $myOrders=orderModel::where('progress',$p->value)->select();
+                    $counts+=count($myOrders);
+                }
+            }
+            $message=json_encode(array(
+                'type'=>'todo'
+                , 'num'=>$counts
+            ));
+            Gateway::sendToUid($uid, $message);
+        }else{
+            $roles=Role::all();
+            foreach ($roles as $role){
+                $counts=0;
+                $uidArr=[];
+                // 获取角色对应的进度实例
+                $progress=Progress::where('role',$role->id)->select();
+
+                // 根据进度获取数据当前角色的所有订单
+                foreach ($progress as $p){
+                    $myOrders=orderModel::where('progress',$p->value)->select();
+                    $counts+=count($myOrders);
+                }
+
+                // 获取当前角色对应的所有用户实例并将id放入数组
+                $users=$role->users;
+                foreach ($users as $u){
+                    array_push($uidArr,$u->id);
+                }
+
+                // 向对应的用户发送消息
+                $msg=json_encode(['type'=>'todo','num'=>$counts]);
+                Gateway::sendToUid($uidArr,$msg);
+            }
+        }
     }
 
     public function test()

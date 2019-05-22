@@ -27,9 +27,6 @@
                         <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                     </button>
                 </div>
-                <div class="layui-inline">
-                    <button id="test2">测试</button>
-                </div>
             </div>
         </div>
         <div class="layui-card-body">
@@ -42,6 +39,19 @@
                 <div class="layui-progress-bar layui-bg-blue" lay-percent={{d.progress}}></div>
                 {{# } }}
                 </div>
+            </script>
+            <script type="text/html" id="factory">
+                {{# if(d.factory === 'A'){ }}
+                <span>宇晗</span>
+                {{# }else if(d.factory === 'B'){ }}
+                <span>艾芯</span>
+                {{# }else if(d.factory === 'C'){ }}
+                <span>瑞研</span>
+                {{# }else if(d.factory === 'D'){ }}
+                <span>晟楠</span>
+                {{# }else if(d.factory === 'Y'){ }}
+                <span>宇扬</span>
+                {{# } }}
             </script>
             <script type="text/html" id="current_roleTpl">
                 {{# let str='{$Think.session.roles}'; }}
@@ -80,13 +90,44 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'workorder', 'table'], function () {
+        var ws=new WebSocket('ws://192.168.0.56:8282');
         let $ = layui.$
             , form = layui.form
             , table = layui.table;
 
-        let timer=setInterval(function () {
-            table.reload('LAY-app-system-order');
-        },30000);
+        // let timer=setInterval(function () {
+        //     table.reload('LAY-app-system-order');
+        // },30000);
+
+        // 服务端主动推送消息时会触发这里的onmessage
+        ws.onmessage = function(e){
+            // json数据转换成js对象
+            let data = eval("("+e.data+")");
+            let type = data.type || '';
+            switch(type){
+                // Events.php中返回的init类型的消息，将client_id发给后台进行uid绑定
+                case 'init':
+                    // 利用jquery发起ajax请求，将client_id发给后端进行uid绑定
+                    $.ajax({
+                        url:'/index/socket/bind'
+                        , data:{
+                            'client_id':data.client_id
+                        }
+                        , type:'POST'
+                        , dataType:'json'
+                        , success:(res)=>{
+
+                        }
+                    });
+                    break;
+                case 'todo':
+                    table.reload('LAY-app-system-order');
+                    break;
+                // 当mvc框架调用GatewayClient发消息时直接alert出来
+                default :
+                    layer.alert(e);
+            }
+        };
 
         $("#order_id").focus();
         $("#order_id").keydown(function (e) {
@@ -107,12 +148,6 @@
             });
         });
 
-        $("#test2").click(function () {
-            $.ajax({
-                url:'/index/socket/test'
-
-            })
-        });
     });
 </script>
 </body>

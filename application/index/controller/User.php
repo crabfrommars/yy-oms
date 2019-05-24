@@ -10,6 +10,7 @@ namespace app\index\controller;
 use app\common\controller\Base;
 use app\common\model\User as userModel;
 use app\common\model\Role;
+use app\common\model\Right;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -310,6 +311,120 @@ class User extends Base
         return $res;
     }
 
+    public function getRole()
+    {
+        $id=Request::request('id');
+        $role=Role::get($id);
+        $rights=$role->rights;
+        return $role;
+    }
+
+    public function getRights()
+    {
+        $rights=Right::all();
+        return $rights;
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     * 渲染权限管理页面
+     */
+    public function renderRightsManage()
+    {
+        return $this->view->fetch('/user/rightsManage');
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     * 渲染权限编辑页面
+     */
+    public function renderRightsEdit()
+    {
+        $id=Request::request('id');
+        $rights=$this->getRights();
+        $this->assign('id',$id);
+        $this->assign('rights',$rights);
+
+        return $this->view->fetch('/user/rightsEdit');
+    }
+
+
+    public function getRoles4Table()
+    {
+        $list=Role::all();
+        $count=count($list);
+
+        // 获取每页显示条数
+        $limit=Request::request('limit');
+
+        // 获取当前页数
+        $page=Request::request('page');
+
+        //分页获取数据
+        $list=Role::page($page, $limit)->order('id','asc')->select();
+
+        //获取角色的所有权限
+        foreach ($list as $key=>$item){
+            $role=Role::get($item->id);
+            $rightsArr=[];
+            $rights=$role->rights;
+            foreach ($rights as $right){
+                array_push($rightsArr,$right->remark);
+            }
+            $item['right']=implode(',',$rightsArr);
+        }
+
+        $result=[
+            'code'=>0,
+            'msg'=>'成功',
+            'count'=>$count,
+            'data'=>$list
+        ];
+
+        return json($result);
+    }
+
+    public function updateRole()
+    {
+        $data=Request::request();
+        $data4up=Request::only(['id','name']);
+        $role=Role::get($data['id']);
+        Role::update($data4up);
+
+        $rightReq=$data['right'];
+        $rightHas=[];
+
+        $rights=$role->rights;
+        foreach ($rights as $right){
+            array_push($rightHas,strval($right->id));
+        }
+
+        // 获取需要新增的关联角色id数组
+        $cos1=array_diff($rightReq,$rightHas);
+
+        // 获取需要删除的关联角色id数组
+        $cos2=array_diff($rightHas,$rightReq);
+
+        if (count($cos1) > 0){
+            foreach ($cos1 as $key){
+                $rightToAdd=Right::get($key);
+                $role->rights()->attach($rightToAdd);
+            }
+        }
+
+        if (count($cos2) > 0){
+            foreach ($cos2 as $key){
+                $rightToDel=Right::get($key);
+                $role->rights()->detach($rightToDel);
+            }
+        }
+
+        $res=['code'=>0,'msg'=>'操作成功'];
+
+        return $res;
+    }
 
     public function test()
     {

@@ -26,7 +26,7 @@ class Drawing extends Base
         if ($req){
             $drawing=Drawings::create([
                 'name'=>''
-                ,'path'=>''
+                ,'address'=>''
             ]);
             if (null!==$drawing){
                 $res=[
@@ -105,14 +105,14 @@ class Drawing extends Base
             Drawings::update([
                 'id'=>$data['id'],
                 'name'=>$file->getInfo()['name'],
-                'path'=>'/uploads/'.$file->getInfo()['name']
+                'address'=>'/uploads/'.$file->getInfo()['name']
             ]);
             $res=[
                 'code'=>0,
                 'msg'=>'上传成功',
                 //返回文件信息时，需再进行一次反向转码
                 'data'=>[
-                    'path'=>'/uploads/'.$file->getInfo()['name']
+                    'address'=>'/uploads/'.$file->getInfo()['name']
                 ]
             ];
         }else{
@@ -133,11 +133,11 @@ class Drawing extends Base
     public function delFileOnly()
     {
         $data=Request::request();
-        $path=iconv('utf-8','gbk',$data['path']);
+        $address=iconv('utf-8','gbk',$data['address']);
         $id=$data['id'];
-        $file=Env::get('root_path').'public'.$path;
+        $file=Env::get('address').'public'.$address;
         if (Drawings::get($id)){
-            Drawings::update(['id'=>$id,'name'=>'','path'=>'']);
+            Drawings::update(['id'=>$id,'name'=>'','address'=>'']);
         }
         if (file_exists($file)){
             unlink($file);
@@ -159,9 +159,9 @@ class Drawing extends Base
         $data=Request::request();
         $id=$data['id'];
         $res=[];
-        if (""!==$data['path']){
-            $path=iconv('utf-8','gbk',$data['path']);
-            $file=Env::get('root_path').'public'.$path;
+        if (""!==$data['address']){
+            $address=iconv('utf-8','gbk',$data['address']);
+            $file=Env::get('root_path').'public'.$address;
 
             //删除文件
             if (file_exists($file)){

@@ -46,7 +46,7 @@
         <div class="layui-inline">
             <label class="layui-form-label" style="color: #FF5722;">加工厂</label>
             <div class="layui-input-inline">
-                <select id="factory" name="factory" lay-filter="factory" lay-verify="required">
+                <select id="factory" name="factory" lay-filter="factory">
                     <option value="">--未选择--</option>
                     <option value="A">(A)杭州宇晗科技有限公司</option>
                     <option value="B">(B)山东艾芯电子科技有限公司</option>
@@ -90,7 +90,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">订单类型</label>
             <div class="layui-input-inline">
-                <select name="order_type" class="my-select" readonly>
+                <select name="order_type" disabled>
                     <option value="翻单">翻单</option>
                     <option value="成品单">成品单</option>
                     <option value="样品单">样品单</option>
@@ -125,7 +125,11 @@
         <div class="layui-inline">
             <label class="layui-form-label">业务员</label>
             <div class="layui-input-inline">
-                <input lay-verify="required" type="text" name="salesman" class="layui-input my-input" placeholder="业务员">
+                <select name="" id="" lay-search="">
+                    {volist name="salesMen" id="s"}
+                    <option name="salesman" value="{$s.id}">{$s.name}</option>
+                    {/volist}
+                </select>
             </div>
         </div>
         <div class="layui-inline">

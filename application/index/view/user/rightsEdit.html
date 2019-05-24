@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>权限编辑</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-form" lay-filter="edit-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item layui-hide">
+        <label class="layui-form-label">编号</label>
+        <div class="layui-input-inline">
+            <input name="id" type="text" class="layui-input" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名</label>
+        <div class="layui-input-inline">
+            <input name="name" type="text" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限</label>
+        <div id="rights" class="layui-input-block">
+            {volist name="rights" id="right"}
+            <input type="checkbox" name="right" value="{$right.id}" title="{$right.remark}">
+            {/volist}
+        </div>
+    </div>
+    <div class="layui-form-item layui-layout-admin">
+        <div class="layui-input-block">
+            <div class="layui-footer" style="left: 0;">
+                <button type="button" class="layui-btn layui-btn-normal" lay-submit lay-filter="submit">提交</button>
+                <button id="close" type="reset" class="layui-btn layui-btn-primary">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'],function () {
+        let form=layui.form
+            , $=layui.$;
+
+        let index = parent.layer.getFrameIndex(window.name);
+        $('#close').click(function () {
+            parent.layer.close(index);
+        });
+
+        function getRole() {
+            $.ajax({
+                url:'/index/user/getRole',
+                type:'POST',
+                data:{
+                    'id':'{$id}'
+                },
+                success:(res)=>{
+
+                    $.each(res.rights,function (i,item) {
+                        $(":checkbox[name='right'][value='"+item.id+"']").attr("checked","checked")
+                    });
+                    form.render(null,'edit-role');
+                    form.val("edit-role",{
+                        "id":res.id,
+                        "name":res.name,
+                    });
+                }
+            })
+        }
+        getRole();
+
+        form.on('submit(submit)',function (data) {
+            let arrRight=[];
+            $(":checkbox[name='right']:checked").each(function () {
+                arrRight.push($(this).val())
+            });
+            // let v=arrRole.length>0?arrRole.join(','):"";
+            data.field.right=arrRight;
+            console.log(data.field);
+            $.ajax({
+                url:'/index/user/updateRole',
+                type:'POST',
+                data:data.field,
+                success:(res)=>{
+                    // console.log(res);
+                    parent.layer.msg(res.msg);
+                    parent.layui.table.reload('roles');
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

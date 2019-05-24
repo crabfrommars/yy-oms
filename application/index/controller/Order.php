@@ -41,27 +41,53 @@ class Order extends Base
         //获取当前页数
         $page=Request::get('page');
 
+        // 判断当前用户是否拥有查看全部订单的权限
+        $user=new User;
+
         //获取搜索关键字
         if (Request::request('id')){
             $id=Request::request('id');
-            $list=orderModel::page($page,$limit)->where('id',$id)->select();
+
+            // 用户拥有查看全部订单的权限才能获取全部订单数据
+            if ($user->haveRight('check_orders')){
+                $list=orderModel::page($page,$limit)->where('id',$id)->select();
+            }else{
+                $list=orderModel::page($page,$limit)
+                    ->where('id',$id)
+                    ->where('salesman',Session::get('id'))
+                    ->select();
+            }
+
             $count=count($list);
             foreach ($list as $item){
                 $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
                 $item['current_role']=$progress['role'];
                 $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
             }
             $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }else{
             //分页获取数据
-            $list=orderModel::page($page,$limit)->order('update_time','desc')->select();
+            if ($user->haveRight('check_orders')){
+                $list=orderModel::page($page,$limit)->order('update_time','desc')->select();
+            }else{
+                $list=orderModel::page($page,$limit)
+                    ->where('salesman',Session::get('id'))
+                    ->order('update_time','desc')
+                    ->select();
+            }
+
             foreach ($list as $item){
                 $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
                 $item['current_role']=$progress['role'];
                 $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
             }
             $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }
+
         return json($result);
 
     }
@@ -120,6 +146,17 @@ class Order extends Base
     {
         $id=Request::request('id');
         $order=orderModel::get($id);
+        $users=userModel::all();
+        $salesMen=[];
+        foreach ($users as $user){
+            $roles=$user->roles;
+            foreach ($roles as $role){
+                if ($role->id == 13){
+                    array_push($salesMen,$user);
+                }
+            }
+        }
+        $this->view->assign('salesMen',$salesMen);
         $this->assign('order',$order);
         return $this->view->fetch('/app/workorder/listform');
     }
@@ -195,6 +232,17 @@ class Order extends Base
         $user=new User();
         $res=$user->haveRight('create_order');
         if ($res){
+            $users=userModel::all();
+            $salesMen=[];
+            foreach ($users as $user){
+                $roles=$user->roles;
+                foreach ($roles as $role){
+                    if ($role->id == 13){
+                        array_push($salesMen,$user);
+                    }
+                }
+            }
+            $this->view->assign('salesMen',$salesMen);
             return $this->view->fetch('/order/create');
         }else{
             return $this->view->fetch('/user/noright');
@@ -527,9 +575,17 @@ class Order extends Base
             $roles=$user->roles;
             foreach ($roles as $role){
                 $progress=Progress::where('role',$role->id)->select();
+                // 角色是销售专员时，仅获取当前用户对应的订单
                 foreach ($progress as $p){
-                    $myOrders=orderModel::where('progress',$p->value)->select();
-                    $counts+=count($myOrders);
+                    if ($role->id == 13){
+                        $myOrders=orderModel::where('progress',$p->value)
+                            ->where('salesman',$user->id)
+                            ->select();
+                        $counts+=count($myOrders);
+                    }else{
+                        $myOrders=orderModel::where('progress',$p->value)->select();
+                        $counts+=count($myOrders);
+                    }
                 }
             }
             $message=json_encode(array(
@@ -538,28 +594,27 @@ class Order extends Base
             ));
             Gateway::sendToUid($uid, $message);
         }else{
-            $roles=Role::all();
-            foreach ($roles as $role){
+            $users=userModel::all();
+            foreach ($users as $user){
                 $counts=0;
-                $uidArr=[];
-                // 获取角色对应的进度实例
-                $progress=Progress::where('role',$role->id)->select();
-
-                // 根据进度获取数据当前角色的所有订单
-                foreach ($progress as $p){
-                    $myOrders=orderModel::where('progress',$p->value)->select();
-                    $counts+=count($myOrders);
+                $roles=$user->roles;
+                foreach ($roles as $role){
+                    $progress=Progress::where('role',$role->id)->select();
+                    foreach ($progress as $p){
+                        if ($role->id == 13){
+                            $myOrders=orderModel::where('progress',$p->value)
+                                ->where('salesman',$user->id)
+                                ->select();
+                            $counts+=count($myOrders);
+                        }else{
+                            $myOrders=orderModel::where('progress',$p->value)->select();
+                            $counts+=count($myOrders);
+                        }
+                    }
                 }
 
-                // 获取当前角色对应的所有用户实例并将id放入数组
-                $users=$role->users;
-                foreach ($users as $u){
-                    array_push($uidArr,$u->id);
-                }
-
-                // 向对应的用户发送消息
                 $msg=json_encode(['type'=>'todo','num'=>$counts]);
-                Gateway::sendToUid($uidArr,$msg);
+                Gateway::sendToUid($user->id,$msg);
             }
         }
     }

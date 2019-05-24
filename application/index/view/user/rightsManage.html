@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>权限管理</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" id="roles" lay-filter="role-rights"></table>
+        </div>
+    </div>
+</div>
+
+<script id="roleTool" type="text/html">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use(['table'],function () {
+        let table=layui.table
+            , $=layui.$;
+
+        table.render({
+            elem:'#roles'
+            , url:'/index/user/getRoles4Table'
+            , page:{
+                limit:20
+                , limits:[10,20,30]
+                , groups:5
+            }
+            , cols:[[
+                {field:'name', width:100, align:'center', title:'名称'}
+                , {field:'right', width:800, title:'权限'}
+                , {title:'操作', align:'center', width:150, toolbar:'#roleTool'}
+            ]]
+        });
+
+        table.on('tool(role-rights)',function (obj) {
+            if (obj.event === 'edit'){
+                layer.open({
+                    type:2,
+                    title:'编辑角色',
+                    content:'/index/user/renderRightsEdit?id='+obj.data.id,
+                    area:['650px','550px']
+                })
+            }else if (obj.event === 'del'){
+                layer.confirm('确定吗',function (index) {
+
+                    layer.close(index);
+                })
+            }
+        })
+    })
+</script>
+</body>
+</html>

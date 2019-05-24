@@ -56,9 +56,9 @@
             <div class="la
             yui-trans layui-form-item layadmin-user-login-other">
                 <label>社交账号登入</label>
-                <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
-                <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
-                <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-qq my-icon"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat my-icon"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo my-icon"></i></a>
 
                 <!--<a href="reg.html" class="layadmin-user-jump-change layadmin-link">注册帐号</a>-->
             </div>
@@ -110,6 +110,14 @@
             }
         });
         form.render();
+
+        $(".my-icon").click(function () {
+            layer.msg('建设中...',{
+                icon:4
+                , offset:'15px'
+                , time:1000
+            })
+        });
 
         //提交
         form.on('submit(LAY-user-login-submit)', function (obj) {

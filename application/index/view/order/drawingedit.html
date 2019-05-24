@@ -20,7 +20,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">文件</label>
         <div class="layui-input-inline">
-            <input type="text" class="layui-input" name="path" readonly>
+            <input type="text" class="layui-input" name="address" readonly>
         </div>
     </div>
     <div class="layui-form-item">
@@ -48,11 +48,11 @@
             , url:'/index/drawing/cover'
             , data:{
                 'id':'{$data.id}',
-                'path':'{$data.path}'
+                'address':'{$data.address}'
             }
             , done:function (res,index,upload) {
                 form.val('drawingEdit',{
-                    "path":res.data.path
+                    "address":res.data.address
                 });
                 layer.msg(res.msg);
             }
@@ -63,7 +63,7 @@
         //为表单赋值
         form.val('drawingEdit',{
             "id":"{$data.id}"
-            , "path":"{$data.path}"
+            , "address":"{$data.address}"
         });
 
         //监听删除文件操作
@@ -72,14 +72,14 @@
                 $.ajax({
                     data:{
                         'id':'{$data.id}'
-                        ,'path':'{$data.    path}'
+                        ,'address':'{$data.address}'
                     },
                     type:'POST',
                     url:'/index/drawing/delFileOnly',
                     success:function (res) {
                         layer.msg(res.msg);
                         form.val('drawingEdit',{
-                            "path":""
+                            "address":""
                         });
                     }
                 });

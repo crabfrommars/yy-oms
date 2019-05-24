@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1:3306
--- 生成日期： 2019-05-15 09:26:17
+-- 生成日期： 2019-05-24 09:04:13
 -- 服务器版本： 5.7.24
--- PHP 版本： 7.2.14
+-- PHP 版本： 7.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -57,17 +57,17 @@ DROP TABLE IF EXISTS `drawings`;
 CREATE TABLE IF NOT EXISTS `drawings` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(255) NOT NULL COMMENT '名称',
-  `path` varchar(255) DEFAULT NULL COMMENT '路径',
+  `address` varchar(255) DEFAULT NULL COMMENT '路径',
   `create_time` int(10) NOT NULL COMMENT '创建时间',
   `update_time` int(10) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='图纸存放';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='图纸存放';
 
 --
 -- 转存表中的数据 `drawings`
 --
 
-INSERT INTO `drawings` (`id`, `name`, `path`, `create_time`, `update_time`) VALUES
+INSERT INTO `drawings` (`id`, `name`, `address`, `create_time`, `update_time`) VALUES
 (7, '247_WEPED_YKZ_12BP_15CM_2019-2-19.pdf', '/uploads/247_WEPED_YKZ_12BP_15CM_2019-2-19.pdf', 1551422429, 1551422749),
 (11, '', '', 1551431256, 1555918887),
 (12, '', '', 1553590428, 1553666449);
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `order` (
   `order_type` varchar(16) NOT NULL DEFAULT '成品单' COMMENT '订单类型',
   `appoint_auditor` varchar(16) NOT NULL DEFAULT '项小成' COMMENT '指定审核人',
   `customer` varchar(255) NOT NULL COMMENT '客户名',
-  `salesman` varchar(55) NOT NULL COMMENT '业务员',
+  `salesman` int(11) NOT NULL COMMENT '业务员',
   `model` varchar(55) NOT NULL COMMENT '型号',
   `quantity` int(11) NOT NULL COMMENT '数量',
   `delivery` tinyint(4) NOT NULL COMMENT '交期',
@@ -275,17 +275,15 @@ CREATE TABLE IF NOT EXISTS `order` (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `order`
 --
 
 INSERT INTO `order` (`id`, `factory`, `pro_type`, `order_type`, `appoint_auditor`, `customer`, `salesman`, `model`, `quantity`, `delivery`, `serial_start`, `serial_end`, `this_t6`, `mother_t6`, `shell_type`, `shell_color`, `baffle`, `mos`, `board`, `elect_machine`, `wire_label`, `shell_label`, `vol1`, `amp1`, `undervoltage1`, `vol2`, `amp2`, `undervoltage2`, `power`, `bluetooth`, `diameter`, `phase`, `length`, `is_water`, `is_wire`, `r27`, `r4`, `electrolytic_capacitor`, `software`, `normal_func`, `func_cruise`, `func_soft_hard`, `func_gear`, `special_func`, `wire_type`, `drawing_func_wires_num`, `bom_id`, `wires`, `wire_holzer`, `wire_elect_lock`, `wire_guard`, `wire_reverse`, `wire_gear`, `remark`, `remark_tech`, `remark_production`, `is_mother`, `progress`, `review_id`, `create_time`, `update_time`) VALUES
-(1, '', '电动车类应用', '成品单', '项小成', '永沛', '闻国军', 'YKZ7280JA', 123, 7, '', '', 1213, 0, '无', '原色', '无', 'A_STP75NF75', 'B_YY24BP_DHQ', '轮毂电机', '无', '无', 123, 32, 12, 0, 0, 0, 213, '无', '6mm²', '宇扬公版', '35CM', 2, 2, '100Ω/2W', '120Ω/1W', '470uF/160V', '', '2,8,14', '无', '无', '无', '1,4,7,8', '宇扬标准', '', 0, '1,6,10', '无', '无', '无', '无', '无', '1231231ASD', '', '', 0, '30%', 0, 1557715926, 1557738135),
-(2, '', '电动车类应用', '翻单', '项小成', '永沛', '闻国军', 'YKZ7280JA', 15, 7, '', '', 0, 1213, '无', '原色', '无', 'A_STP75NF75', 'B_YY24BP_DHQ', '轮毂电机', '无', '无', 123, 32, 12, 0, 0, 0, 213, '无', '6mm²', '宇扬公版', '35CM', 2, 2, '100Ω/2W', '120Ω/1W', '470uF/160V', '', '2,8,14', '无', '无', '无', '1,4,7,8', '宇扬标准', '', 0, '1,6,10', '无', '无', '无', '无', '无', '1231231ASD', '', '', 0, '100%', 0, 1557732087, 1557736878),
-(3, '', '电动车类应用', '翻单', '项小成', '永沛', '闻国军', 'YKZ7280JA', 50, 7, '', '', 0, 1213, '无', '原色', '无', 'A_STP75NF75', 'B_YY24BP_DHQ', '轮毂电机', '无', '无', 123, 32, 12, 0, 0, 0, 213, '无', '6mm²', '宇扬公版', '35CM', 2, 2, '100Ω/2W', '120Ω/1W', '470uF/160V', '', '2,8,14', '无', '无', '无', '1,4,7,8', '宇扬标准', '', 0, '1,6,10', '无', '无', '无', '无', '无', '1231231ASD', '', '', 0, '30%', 0, 1557738022, 1557738022),
-(4, NULL, '电动车类应用', '成品单', '项小成', '永沛', '3232', 'YKZ7280JA', 123, 7, NULL, NULL, NULL, NULL, '无', '原色', '无', 'A_STP75NF75', 'B_YY24BP_DHQ', '轮毂电机', '无', '无', 123, 32, 12, 0, 0, 0, 213, '无', NULL, '宇扬公版', '35CM', 2, 2, NULL, NULL, NULL, NULL, '7', '无', '无', '无', '3', '宇扬标准', '', 0, '1,2,3', '无', '无', '无', '无', '无', '1231231ASD', NULL, NULL, 1, '30%', NULL, 1557907003, 1557907777);
+(1, NULL, '电动车类应用', '样品单', '莫刚强', '测试', 1002, 'YKZ7280JA', 5, 7, NULL, NULL, NULL, NULL, 'YKZ_一代', '原色', '默认', 'J_S10H12R', 'A_YY24AP_HQ', '差速电机', '无', '无', 72, 80, 60, 0, 0, 0, 800, '无', NULL, '宇扬公版', '25CM', 2, 2, NULL, NULL, NULL, NULL, '1,3,4,9,10,12', '无', '无', '拨动三档', '', '客户定制', '', 0, '1,2,3,5', '无', '无', '无', '无', '拨动三档', '按照客户提供的图纸做线', NULL, NULL, 0, '30%', NULL, 1558679512, 1558688191),
+(2, NULL, '电动车类应用', '样品单', '项小成', '测试', 1022, 'YKZ7280JA', 5, 7, NULL, NULL, NULL, NULL, 'YKZ_一代', '原色', '默认', 'J_S10H12R', 'A_YY24AP_HQ', '差速电机', '无', '无', 72, 80, 60, 0, 0, 0, 800, '无', NULL, '宇扬公版', '25CM', 2, 2, NULL, NULL, NULL, NULL, '1,3,4,9,10,12', '无', '无', '拨动三档', '', '客户定制', '', 0, '1,2,3,5', '无', '无', '无', '无', '拨动三档', '按照客户提供的图纸做线', NULL, NULL, 0, '20%', NULL, 1558683427, 1558683460);
 
 -- --------------------------------------------------------
 
@@ -302,7 +300,7 @@ CREATE TABLE IF NOT EXISTS `progress` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `value` (`value`),
   KEY `role_id` (`role`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `progress`
@@ -319,7 +317,8 @@ INSERT INTO `progress` (`id`, `value`, `content`, `role`) VALUES
 (8, '80%', '生产加工', 16),
 (9, '90%', '装箱打包', 19),
 (10, '95%', '发货', 14),
-(11, '100%', '完成', 999);
+(11, '100%', '完成', 999),
+(12, '0%', '异常', 2);
 
 -- --------------------------------------------------------
 
@@ -373,7 +372,7 @@ CREATE TABLE IF NOT EXISTS `right` (
   `name` varchar(32) NOT NULL,
   `remark` varchar(55) NOT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `right`
@@ -389,7 +388,8 @@ INSERT INTO `right` (`id`, `name`, `remark`) VALUES
 (7, 'edit_user', '编辑用户'),
 (8, 'create_review', '创建评审单'),
 (9, 'check_reviews', '查阅评审单'),
-(10, 'mother_order', '设为母单');
+(10, 'mother_order', '设为母单'),
+(11, 'check_orders', '查看所有订单');
 
 -- --------------------------------------------------------
 
@@ -444,7 +444,7 @@ CREATE TABLE IF NOT EXISTS `role_right` (
   PRIMARY KEY (`id`),
   KEY `right_id` (`right_id`),
   KEY `role_id` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `role_right`
@@ -465,7 +465,32 @@ INSERT INTO `role_right` (`id`, `role_id`, `right_id`) VALUES
 (12, 1, 7),
 (13, 1, 8),
 (14, 1, 9),
-(15, 1, 10);
+(15, 1, 10),
+(16, 1, 6),
+(17, 1, 11),
+(18, 2, 6),
+(19, 2, 10),
+(20, 2, 11),
+(21, 3, 2),
+(22, 3, 3),
+(23, 3, 4),
+(24, 3, 10),
+(25, 3, 11),
+(26, 4, 3),
+(27, 7, 3),
+(28, 7, 11),
+(29, 14, 11),
+(30, 4, 11),
+(31, 6, 2),
+(32, 6, 3),
+(33, 6, 11),
+(34, 13, 1),
+(35, 17, 2),
+(36, 17, 3),
+(37, 17, 11),
+(38, 18, 11),
+(39, 16, 11),
+(40, 19, 11);
 
 -- --------------------------------------------------------
 
@@ -483,20 +508,18 @@ CREATE TABLE IF NOT EXISTS `timeline` (
   `create_time` int(10) NOT NULL COMMENT '创建时间',
   `update_time` int(10) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `timeline`
 --
 
 INSERT INTO `timeline` (`id`, `order_id`, `action`, `content`, `personnel`, `create_time`, `update_time`) VALUES
-(1, 1, '创建订单', '无', '解宜江', 1557715854, 1557715854),
-(2, 1, '创建订单', '无', '解宜江', 1557715926, 1557715926),
-(3, 2, '创建订单', '无', '解宜江', 1557732087, 1557732087),
-(4, 2, '流转至：80% | 生产加工 | 生产经理', '开始生产', '解宜江', 1557736797, 1557736797),
-(5, 2, '流转至：100% | 完成 | ', '', '解宜江', 1557736878, 1557736878),
-(6, 3, '创建订单', '无', '解宜江', 1557738022, 1557738022),
-(7, 4, '创建订单', '无', '解宜江', 1557907003, 1557907003);
+(1, 1, '创建订单', '无', '吕兆锋', 1558679512, 1558679512),
+(2, 2, '创建订单', '无', '闻国军', 1558683427, 1558683427),
+(3, 2, '流转至：20% | 配发评审单 | 销售专员', '评审单发来', '解宜江', 1558683460, 1558683460),
+(4, 1, '流转至：20% | 配发评审单 | 销售专员', '评审单发来', '解宜江', 1558683493, 1558683493),
+(5, 1, '流转至：30% | 审核订单 | 市场主管', '', '吕兆锋', 1558683521, 1558683521);
 
 -- --------------------------------------------------------
 
@@ -553,7 +576,7 @@ CREATE TABLE IF NOT EXISTS `user_role` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `role_id` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `user_role`
@@ -561,7 +584,6 @@ CREATE TABLE IF NOT EXISTS `user_role` (
 
 INSERT INTO `user_role` (`id`, `user_id`, `role_id`) VALUES
 (1, 1063, 1),
-(2, 1063, 5),
 (3, 1001, 4),
 (4, 1004, 4),
 (5, 1003, 7),
@@ -583,25 +605,10 @@ INSERT INTO `user_role` (`id`, `user_id`, `role_id`) VALUES
 (23, 1072, 17),
 (24, 1340, 17),
 (25, 1023, 14),
-(26, 1001, 2),
-(27, 1002, 2),
-(28, 1003, 2),
-(29, 1004, 2),
-(30, 1006, 2),
-(31, 1010, 2),
-(32, 1013, 2),
-(33, 1014, 2),
-(34, 1015, 2),
-(35, 1022, 2),
-(36, 1023, 2),
-(37, 1031, 2),
-(38, 1037, 2),
-(39, 1072, 2),
-(40, 1092, 2),
-(41, 1121, 2),
-(42, 1172, 2),
-(43, 1197, 2),
-(44, 1340, 2);
+(47, 1002, 13),
+(48, 1015, 13),
+(49, 1022, 13),
+(50, 1092, 13);
 
 --
 -- 限制导出的表

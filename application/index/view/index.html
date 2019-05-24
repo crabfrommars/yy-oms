@@ -143,6 +143,9 @@
                             <dd data-name="edit_user" id="edit_user">
                                 <a lay-href="/index/user/manage">用户管理</a>
                             </dd>
+                            <dd data-name="edit_user" id="manage_rights">
+                                <a lay-href="/index/user/renderRightsManage">权限管理</a>
+                            </dd>
                         </dl>
                     </li>
                 </ul>
@@ -193,11 +196,11 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'util'], function () {
-        var ws = new WebSocket('ws://192.168.0.56:8282')
-            , todoNum = 10;
+        var ws = new WebSocket('ws://192.168.0.56:8282');
         let util = layui.util
             , $ = layui.$
-            , myTip = 1;
+            , myTip = 1
+            , todoNum = 0;
 
         function openMsg() {
             myTip = layer.tips("你有<span>" + todoNum + "</span>个待处理的订单，前往<a lay-href='/index/app/workorder' style='color: #01AAED'>订单管理</a>查看", '.my-notice', {
@@ -241,19 +244,32 @@
                     break;
                 case 'todo':
                     console.log(data);
-                    todoNum = data.num;
-                    if (todoNum <= 0) {
-                        $(".my-notice").addClass("layui-hide");
-                    } else {
-                        $("#todo").html(todoNum);
-                        $(".my-notice").removeClass("layui-hide");
-                        openMsg();
-                        showNotification(todoNum,"todo");
+                    console.log(todoNum);
+                    if (todoNum != data.num){
                         $(".my-notice").hover(function () {
                             openMsg();
                         }, function () {
 
-                        })
+                        });
+                        if (data.num > todoNum){
+                            todoNum = data.num;
+                            if (todoNum <= 0) {
+                                $(".my-notice").addClass("layui-hide");
+                            } else {
+                                $("#todo").html(todoNum);
+                                $(".my-notice").removeClass("layui-hide");
+                                openMsg();
+                                showNotification(todoNum,"todo");
+                            }
+                        } else {
+                            todoNum = data.num;
+                            if (todoNum <= 0) {
+                                $(".my-notice").addClass("layui-hide");
+                            } else {
+                                $("#todo").html(todoNum);
+                                $(".my-notice").removeClass("layui-hide");
+                            }
+                        }
                     }
                     break;
                 // 当mvc框架调用GatewayClient发消息时直接alert出来
@@ -275,7 +291,12 @@
                             , tag: _tag
                             , icon: "/static/notify.ico"
                             , requireInteraction:true
+                            , silent:true
                         });
+                    notification.onshow=showAudio();
+                    notification.onclick=function (e) {
+                        window.focus();
+                    }
                     // setTimeout(function () {
                     //     notification.close();
                     // }, 5000);
@@ -301,6 +322,34 @@
                     }
                 })
             }
+        }
+
+        function showAudio()
+        {
+            // 创建音频上下文
+            let audioCtx = new AudioContext();
+            // 创建音调控制对象
+            let oscillator = audioCtx.createOscillator();
+            // 创建音量控制对象
+            let gainNode = audioCtx.createGain();
+            // 音调音量关联
+            oscillator.connect(gainNode);
+            // 音量和设备关联
+            gainNode.connect(audioCtx.destination);
+            // 音调类型指定为正弦波
+            oscillator.type = 'sine';
+            // 设置音调频率
+            oscillator.frequency.value = 1500.00;
+            // 先把当前音量设为0
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            // 0.01秒时间内音量从刚刚的0变成1，线性变化
+            gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.01);
+            // 声音走起
+            oscillator.start(audioCtx.currentTime);
+            // 1秒时间内音量从刚刚的1变成0.001，指数变化
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+            // 1秒后停止声音
+            oscillator.stop(audioCtx.currentTime + 1);
         }
 
         $("#test").click(function () {

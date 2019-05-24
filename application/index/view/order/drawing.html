@@ -16,24 +16,24 @@
         <div class="layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form">
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <div class="layui-input-inline">
-                            <select name="" id="">
-                                <option value="">全部</option>
-                                <option value="">标准</option>
-                                <option value="">定制</option>
-                                <option value="">其他</option>
-                            </select>
-                        </div>
-                    </div>
+<!--                    <div class="layui-inline">-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <select name="" id="">-->
+<!--                                <option value="">全部</option>-->
+<!--                                <option value="">标准</option>-->
+<!--                                <option value="">定制</option>-->
+<!--                                <option value="">其他</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label">图纸号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                            <input id="dId" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="LAY-app-order-search">
+                        <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="searchDrawing">
                             <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                         </button>
                     </div>
@@ -113,7 +113,7 @@
                     layer.open({
                        type:2
                        , title:'编辑图纸'
-                       , content:'/index/drawing/drawingedit?id='+data.id+'&path='+data.path
+                       , content:'/index/drawing/drawingedit?id='+data.id+'&address='+data.address
                        , area:['450px','450px']
                        , btn:['提交','取消']
                        , btnAlign:'c'
@@ -140,11 +140,31 @@
                     break;
             }
 
-        })
+        });
+
+        $("#dId").focus();
+        $("#dId").keydown(function (e) {
+            if (e.keyCode === 13){
+                $("#search").click();
+            }
+        });
+
+        // 搜索
+        form.on('submit(searchDrawing)', function (data) {
+            let field = data.field;
+
+            //执行重载
+            table.reload('drawing', {
+                where: field
+                , page: {
+                    curr: 1 //重新从第一页开始
+                }
+            });
+        });
     })
 </script>
 <script type="text/html" id="drawingLink">
-    <a href="{{d.path}}" target="_blank"><span style="color: #01AAED">{{d.name}}</span></a>
+    <a href="{{d.address}}" target="_blank"><span style="color: #01AAED">{{d.name}}</span></a>
 </script>
 <script type="text/html" id="barDrawing">
     <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>

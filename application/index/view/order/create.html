@@ -66,7 +66,15 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span class="nec">*</span>业务员</label>
                     <div class="layui-input-inline">
-                        <input lay-verify="required" type="text" name="salesman" class="layui-input" placeholder="业务员">
+                        <select name="salesman" id="salesman" lay-search="">
+                            {volist name="salesMen" id="s"}
+                            {if($s.id ==$Think.session.id)}
+                            <option value="{$s.id}" selected>{$s.name}</option>
+                            {else /}
+                            <option value="{$s.id}">{$s.name}</option>
+                            {/if}
+                            {/volist}
+                        </select>
                     </div>
                 </div>
                 <div class="layui-form-item">

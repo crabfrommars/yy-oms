@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>订单回收站</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">工号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <table class="layui-table" id="recycle" lay-filter="recycle"></table>
+        </div>
+    </div>
+</div>
+
+<script id="recTool" type="text/html">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="restore">还原</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="des">彻底删除</a>
+</script>
+
+<script>
+    layui.use(['table'],function () {
+        let table=layui.table
+            , $=layui.$;
+
+        table.render({
+            elem:'#recycle'
+            , url:'/index/order/getRecycle'
+            , page:{
+                limit:10
+                , limits:[10,20]
+                , group:5
+            }
+            , cols:[[
+                {field:'id', width:70, align:'center', title:'编号', fixed:'left'}
+                , {field:'customer', title:'客户名', width:180}
+                , {field:'model', title:'型号', width:180}
+                , {field:'salesman', title:'业务员', width:75, align:'center'}
+                , {field:'quantity', title:'数量', width:60, align:'center'}
+                , {title:'操作', width:150, align:'center', toolbar:'#recTool'}
+            ]]
+            , text:{
+                none:'无数据'
+            }
+        });
+
+        table.on('tool(recycle)',function (obj) {
+            if (obj.event === 'restore'){
+                layer.confirm('确定还原吗？',{icon:3},function (index) {
+                    $.ajax({
+                        url:'/index/order/restore'
+                        , data:{
+                            'id':obj.data.id
+                        }
+                        , type:'POST'
+                        , success:(res)=>{
+                            if (res.code === 0){
+                                layer.msg(res.msg,{icon:1});
+                                table.reload('recycle')
+                            }else if (res.code === 1){
+                                layer.msg(res.msg,{icon:2});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            } else if (obj.event === 'des'){
+                layer.confirm('确定彻底删除吗？',{icon:3},function (index) {
+                    $.ajax({
+                        url:'/index/order/del'
+                        , data:{
+                            'id':obj.data.id
+                            , 'type':'destroy'
+                        }
+                        , type:'POST'
+                        , success:(res)=>{
+                            if (res.code === 0){
+                                layer.msg(res.msg,{icon:1});
+                                table.reload('recycle')
+                            }else if (res.code === 1 || res.code === 2){
+                                layer.msg(res.msg,{icon:2});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        })
+    })
+</script>
+</body>
+</html>

@@ -128,6 +128,9 @@
                             <dd data-name="review-manage">
                                 <a lay-href="/index/review/renderSel">评审单管理</a>
                             </dd>
+                            <dd data-name="order-recycle">
+                                <a lay-href="/index/order/renderRecycle">订单回收站</a>
+                            </dd>
                         </dl>
                     </li>
                     <li data-name="app" class="layui-nav-item">
@@ -196,7 +199,7 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'util'], function () {
-        var ws = new WebSocket('ws://192.168.0.56:8282');
+        var ws = new WebSocket('ws://127.0.0.1:8282');
         let util = layui.util
             , $ = layui.$
             , myTip = 1

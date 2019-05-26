@@ -8,6 +8,7 @@
 
 namespace app\common\model;
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class Order extends Model
 {
@@ -22,13 +23,12 @@ class Order extends Model
         'update_time'=>'timestamp:y-m-d H:i',
     ];
 
-    public function getCurrentChargeAttr($value)
+    use SoftDelete;
+    protected $deleteTime='delete_time';
+
+    // 关联评审单模型
+    public function review()
     {
-        $current_charge=[
-            '1001'=>'项小成'
-            , '1003'=>'莫刚强'
-            , '1063'=>'解宜江'
-        ];
-        return $current_charge[$value];
+        return $this->hasOne('Reviews','order_id','id');
     }
 }

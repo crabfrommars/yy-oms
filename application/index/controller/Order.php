@@ -12,9 +12,11 @@ use app\common\model\Order as orderModel;
 use app\common\model\Role;
 use app\common\model\Timeline;
 use app\common\model\Progress;
+use app\common\model\Reviews;
 use app\common\model\Options;
 use app\common\model\User as userModel;
 use app\index\controller\User;
+use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 use think\route\Rule;
@@ -270,6 +272,46 @@ class Order extends Base
         }else{
             return ['message'=>'创建失败，请检查'];
         }
+    }
+
+    /**
+     * 删除订单
+     */
+    public function del()
+    {
+        $user=new User;
+        if ($user->haveRight('delete_order')){
+            $type=Request::request('type');
+            $id=Request::request('id');
+            if ($type === 'soft'){
+                // 软删除
+                if (orderModel::destroy($id)){
+                    $res=['code'=>0,'msg'=>'操作成功，订单已放入回收站'];
+                }else{
+                    $res=['code'=>1,'msg'=>'操作失败，请检查'];
+                };
+            }else{
+                // 真实删除
+                // 删除关联的评审单数据
+                $review=Reviews::where('order_id',$id)->find();
+                $order=orderModel::withTrashed()->find($id);
+                if ($review){
+                    $sql1=$review->delete();
+                }else{
+                    $sql1=true;
+                }
+                $sql2=$order->delete(true);
+                if ($sql1 && $sql2){
+                    $res=['code'=>0,'msg'=>'操作成功，订单已彻底删除'];
+                }else{
+                    $res=['code'=>1,'msg'=>'操作失败，请检查'];
+                }
+            }
+        }else{
+            $res=['code'=>2,'msg'=>'你没有相应的权限'];
+        }
+
+        return $res;
     }
 
     /**
@@ -619,12 +661,93 @@ class Order extends Base
         }
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     * 渲染订单回收站页面
+     */
+    public function renderRecycle()
+    {
+        $user=new User;
+        if ($user->haveRight('manage_recycle')){
+            return $this->view->fetch('/order/recycle');
+        }else{
+            return $this->view->fetch('/user/noright');
+        }
+    }
+
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * 获取软删除的订单数据
+     */
+    public function getRecycle()
+    {
+        $list=orderModel::all();
+        $count=count($list);
+
+        //获取每页显示条数
+        $limit=Request::get('limit');
+
+        //获取当前页数
+        $page=Request::get('page');
+
+        //获取搜索关键字
+        if (Request::request('id')){
+            $id=Request::request('id');
+
+            $list=orderModel::onlyTrashed()->page($page,$limit)->where('id',$id)->select();
+            $count=count($list);
+            foreach ($list as $item){
+                $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
+                $item['current_role']=$progress['role'];
+                $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
+            }
+            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+        }else{
+            //分页获取数据
+            $list=orderModel::onlyTrashed()->page($page,$limit)->order('update_time','desc')->select();
+
+            foreach ($list as $item){
+                $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
+                $item['current_role']=$progress['role'];
+                $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
+            }
+            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+        }
+
+        return json($result);
+    }
+
+    /**
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * 还原软删除的订单
+     */
+    public function restore()
+    {
+        $id=Request::request('id');
+        $order=orderModel::onlyTrashed()->find($id);
+        $sql=$order->restore();
+        if ($sql){
+            $res=['code'=>0,'msg'=>'操作成功'];
+        }else{
+            $res=['code'=>1,'msg'=>'操作失败，请检查'];
+        }
+        return $res;
+    }
     public function test()
     {
-        $data=Request::request('num');
-        Session::set('num',$data);
-        $res=Session::get('num');
-        return $res;
+        $order=orderModel::onlyTrashed()->find(1);
+        $order->restore();
     }
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1:3306
--- 生成日期： 2019-05-24 09:04:13
+-- 生成日期： 2019-05-26 13:24:23
 -- 服务器版本： 5.7.24
 -- PHP 版本： 7.3.1
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `drawings` (
   `create_time` int(10) NOT NULL COMMENT '创建时间',
   `update_time` int(10) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='图纸存放';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='图纸存放';
 
 --
 -- 转存表中的数据 `drawings`
@@ -274,16 +274,20 @@ CREATE TABLE IF NOT EXISTS `order` (
   `review_id` int(11) DEFAULT NULL COMMENT '关联评审单编号',
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
+  `delete_time` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `order`
 --
 
-INSERT INTO `order` (`id`, `factory`, `pro_type`, `order_type`, `appoint_auditor`, `customer`, `salesman`, `model`, `quantity`, `delivery`, `serial_start`, `serial_end`, `this_t6`, `mother_t6`, `shell_type`, `shell_color`, `baffle`, `mos`, `board`, `elect_machine`, `wire_label`, `shell_label`, `vol1`, `amp1`, `undervoltage1`, `vol2`, `amp2`, `undervoltage2`, `power`, `bluetooth`, `diameter`, `phase`, `length`, `is_water`, `is_wire`, `r27`, `r4`, `electrolytic_capacitor`, `software`, `normal_func`, `func_cruise`, `func_soft_hard`, `func_gear`, `special_func`, `wire_type`, `drawing_func_wires_num`, `bom_id`, `wires`, `wire_holzer`, `wire_elect_lock`, `wire_guard`, `wire_reverse`, `wire_gear`, `remark`, `remark_tech`, `remark_production`, `is_mother`, `progress`, `review_id`, `create_time`, `update_time`) VALUES
-(1, NULL, '电动车类应用', '样品单', '莫刚强', '测试', 1002, 'YKZ7280JA', 5, 7, NULL, NULL, NULL, NULL, 'YKZ_一代', '原色', '默认', 'J_S10H12R', 'A_YY24AP_HQ', '差速电机', '无', '无', 72, 80, 60, 0, 0, 0, 800, '无', NULL, '宇扬公版', '25CM', 2, 2, NULL, NULL, NULL, NULL, '1,3,4,9,10,12', '无', '无', '拨动三档', '', '客户定制', '', 0, '1,2,3,5', '无', '无', '无', '无', '拨动三档', '按照客户提供的图纸做线', NULL, NULL, 0, '30%', NULL, 1558679512, 1558688191),
-(2, NULL, '电动车类应用', '样品单', '项小成', '测试', 1022, 'YKZ7280JA', 5, 7, NULL, NULL, NULL, NULL, 'YKZ_一代', '原色', '默认', 'J_S10H12R', 'A_YY24AP_HQ', '差速电机', '无', '无', 72, 80, 60, 0, 0, 0, 800, '无', NULL, '宇扬公版', '25CM', 2, 2, NULL, NULL, NULL, NULL, '1,3,4,9,10,12', '无', '无', '拨动三档', '', '客户定制', '', 0, '1,2,3,5', '无', '无', '无', '无', '拨动三档', '按照客户提供的图纸做线', NULL, NULL, 0, '20%', NULL, 1558683427, 1558683460);
+INSERT INTO `order` (`id`, `factory`, `pro_type`, `order_type`, `appoint_auditor`, `customer`, `salesman`, `model`, `quantity`, `delivery`, `serial_start`, `serial_end`, `this_t6`, `mother_t6`, `shell_type`, `shell_color`, `baffle`, `mos`, `board`, `elect_machine`, `wire_label`, `shell_label`, `vol1`, `amp1`, `undervoltage1`, `vol2`, `amp2`, `undervoltage2`, `power`, `bluetooth`, `diameter`, `phase`, `length`, `is_water`, `is_wire`, `r27`, `r4`, `electrolytic_capacitor`, `software`, `normal_func`, `func_cruise`, `func_soft_hard`, `func_gear`, `special_func`, `wire_type`, `drawing_func_wires_num`, `bom_id`, `wires`, `wire_holzer`, `wire_elect_lock`, `wire_guard`, `wire_reverse`, `wire_gear`, `remark`, `remark_tech`, `remark_production`, `is_mother`, `progress`, `review_id`, `create_time`, `update_time`, `delete_time`) VALUES
+(8, NULL, '电动车类应用', '成品单', '项小成', 'test', 1002, 'eee', 123, 23, NULL, NULL, NULL, NULL, '无', '原色', '无', 'G_IRFP4468PbF', 'E_YY36AP', '轮毂电机', '无', '无', 312, 123, 12, 0, 0, 0, 123, '无', NULL, '宇扬公版', '35CM', 2, 2, NULL, NULL, NULL, NULL, '', '无', '无', '无', '', '宇扬标准', '', 0, '', '无', '无', '无', '无', '无', '', NULL, NULL, 0, '30%', NULL, 1558845153, 1558845153, NULL),
+(9, NULL, '电动车类应用', '成品单', '项小成', 'test', 1002, 'eee', 123, 23, NULL, NULL, NULL, NULL, '无', '原色', '无', 'G_IRFP4468PbF', 'E_YY36AP', '轮毂电机', '无', '无', 312, 123, 12, 0, 0, 0, 123, '无', NULL, '宇扬公版', '35CM', 2, 2, NULL, NULL, NULL, NULL, '', '无', '无', '无', '', '宇扬标准', '', 0, '', '无', '无', '无', '无', '无', '', NULL, NULL, 0, '30%', NULL, 1558847956, 1558847956, NULL),
+(10, NULL, '电动车类应用', '成品单', '项小成', 'test', 1002, 'eee', 123, 23, NULL, NULL, NULL, NULL, '无', '原色', '无', 'G_IRFP4468PbF', 'E_YY36AP', '轮毂电机', '无', '无', 312, 123, 12, 0, 0, 0, 123, '无', NULL, '宇扬公版', '35CM', 2, 2, NULL, NULL, NULL, NULL, '', '无', '无', '无', '', '宇扬标准', '', 0, '', '无', '无', '无', '无', '无', '', NULL, NULL, 0, '30%', NULL, 1558847958, 1558847958, NULL),
+(11, NULL, '电动车类应用', '成品单', '项小成', 'test', 1002, 'eee', 123, 23, NULL, NULL, NULL, NULL, '无', '原色', '无', 'G_IRFP4468PbF', 'E_YY36AP', '轮毂电机', '无', '无', 312, 123, 12, 0, 0, 0, 123, '无', NULL, '宇扬公版', '35CM', 2, 2, NULL, NULL, NULL, NULL, '', '无', '无', '无', '', '宇扬标准', '', 0, '', '无', '无', '无', '无', '无', '', NULL, NULL, 0, '30%', NULL, 1558847959, 1558847959, NULL),
+(12, '', '电动车类应用', '成品单', '项小成', 'test', 1002, 'eee', 123, 23, '', '', 0, 0, '无', '原色', '无', 'G_IRFP4468PbF', 'E_YY36AP', '轮毂电机', '无', '无', 312, 123, 12, 0, 0, 0, 123, '无', '2.5mm²', '宇扬公版', '35CM', 2, 2, '100Ω/2W', '无', '470uF/80V', '', '', '无', '无', '无', '', '宇扬标准', '', 0, '', '无', '无', '无', '无', '无', '', '', '', 0, '10%', 0, 1558847961, 1558876844, NULL);
 
 -- --------------------------------------------------------
 
@@ -372,7 +376,7 @@ CREATE TABLE IF NOT EXISTS `right` (
   `name` varchar(32) NOT NULL,
   `remark` varchar(55) NOT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `right`
@@ -389,7 +393,10 @@ INSERT INTO `right` (`id`, `name`, `remark`) VALUES
 (8, 'create_review', '创建评审单'),
 (9, 'check_reviews', '查阅评审单'),
 (10, 'mother_order', '设为母单'),
-(11, 'check_orders', '查看所有订单');
+(11, 'check_orders', '查看所有订单'),
+(12, 'manage_recycle', '管理回收站'),
+(13, 'delete_order', '删除订单'),
+(14, 'manage_rights', '管理权限');
 
 -- --------------------------------------------------------
 
@@ -444,7 +451,7 @@ CREATE TABLE IF NOT EXISTS `role_right` (
   PRIMARY KEY (`id`),
   KEY `right_id` (`right_id`),
   KEY `role_id` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `role_right`
@@ -490,7 +497,12 @@ INSERT INTO `role_right` (`id`, `role_id`, `right_id`) VALUES
 (37, 17, 11),
 (38, 18, 11),
 (39, 16, 11),
-(40, 19, 11);
+(40, 19, 11),
+(41, 1, 12),
+(42, 2, 12),
+(43, 1, 13),
+(44, 2, 13),
+(45, 1, 14);
 
 -- --------------------------------------------------------
 
@@ -508,7 +520,7 @@ CREATE TABLE IF NOT EXISTS `timeline` (
   `create_time` int(10) NOT NULL COMMENT '创建时间',
   `update_time` int(10) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `timeline`
@@ -519,7 +531,18 @@ INSERT INTO `timeline` (`id`, `order_id`, `action`, `content`, `personnel`, `cre
 (2, 2, '创建订单', '无', '闻国军', 1558683427, 1558683427),
 (3, 2, '流转至：20% | 配发评审单 | 销售专员', '评审单发来', '解宜江', 1558683460, 1558683460),
 (4, 1, '流转至：20% | 配发评审单 | 销售专员', '评审单发来', '解宜江', 1558683493, 1558683493),
-(5, 1, '流转至：30% | 审核订单 | 市场主管', '', '吕兆锋', 1558683521, 1558683521);
+(5, 1, '流转至：30% | 审核订单 | 市场主管', '', '吕兆锋', 1558683521, 1558683521),
+(6, 3, '创建订单', '无', '解宜江', 1558845135, 1558845135),
+(7, 4, '创建订单', '无', '解宜江', 1558845147, 1558845147),
+(8, 5, '创建订单', '无', '解宜江', 1558845149, 1558845149),
+(9, 6, '创建订单', '无', '解宜江', 1558845150, 1558845150),
+(10, 7, '创建订单', '无', '解宜江', 1558845152, 1558845152),
+(11, 8, '创建订单', '无', '解宜江', 1558845153, 1558845153),
+(12, 9, '创建订单', '无', '解宜江', 1558847956, 1558847956),
+(13, 10, '创建订单', '无', '解宜江', 1558847958, 1558847958),
+(14, 11, '创建订单', '无', '解宜江', 1558847960, 1558847960),
+(15, 12, '创建订单', '无', '解宜江', 1558847961, 1558847961),
+(16, 12, '流转至：10% | 编辑订单 | 销售专员', '', '解宜江', 1558876819, 1558876819);
 
 -- --------------------------------------------------------
 

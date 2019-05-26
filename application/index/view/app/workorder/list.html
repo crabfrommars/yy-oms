@@ -90,7 +90,7 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'workorder', 'table'], function () {
-        var ws=new WebSocket('ws://192.168.0.56:8282');
+        var ws=new WebSocket('ws://127.0.0.1:8282');
         let $ = layui.$
             , form = layui.form
             , table = layui.table;

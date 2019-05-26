@@ -332,7 +332,12 @@ class User extends Base
      */
     public function renderRightsManage()
     {
-        return $this->view->fetch('/user/rightsManage');
+        $user=new User;
+        if ($user->haveRight('manage_rights')){
+            return $this->view->fetch('/user/rightsManage');
+        }else{
+            return $this->view->fetch('/user/noright');
+        }
     }
 
     /**

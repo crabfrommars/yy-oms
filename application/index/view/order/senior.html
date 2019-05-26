@@ -24,13 +24,21 @@
         </div>
         <span class="layui-badge-rim">注：订单为翻单，或当前账户无相应权限时，无法设为母单</span>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">挂起</label>
-        <div class="layui-input-block">
-            <input id="hold" type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="is_hold" disabled>
-        </div>
-    </div>
 </form>
+
+<div class="box">
+    <button id="del" class="layui-btn layui-btn-fluid layui-btn-radius layui-btn-warm">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</div>
+
+<div class="box">
+    <button id="des" class="layui-btn layui-btn-fluid layui-btn-radius layui-btn-danger">
+        <i class="layui-icon layui-icon-close"></i>
+        彻底删除
+    </button>
+</div>
 
 <script src="/static/layuiadmin/layui/layui.js"></script>
 <script>
@@ -40,7 +48,42 @@
         index: 'lib/index' //主入口模块
     }).use(['form'], function () {
         let $ = layui.$
-            , form=layui.form;
+            , form=layui.form
+            , index = parent.layer.getFrameIndex(window.name);
+
+        function del(type) {
+            $.ajax({
+                url:'/index/order/del'
+                , data:{
+                    'id':'{$order.id}'
+                    , 'type':type
+                }
+                , type:'POST'
+                , success:(res)=>{
+                    if (res.code === 0){
+                        parent.layer.msg(res.msg,{icon:1});
+                        parent.layer.close(index);
+                        parent.layui.table.reload('LAY-app-system-order');
+                    } else if (res.code === 1 || res.code === 2){
+                        parent.layer.msg(res.msg,{icon:2})
+                    }
+                }
+            });
+        }
+
+        $("#del").click(function () {
+            parent.layer.confirm('确定吗？订单将进入回收站',{icon:3,title:'提示'},function (index) {
+                layer.close(index);
+                del('soft');
+            })
+        });
+
+        $("#des").click(function () {
+            parent.layer.confirm('确定吗？订单将彻底删除',{icon:3,title:'提示'},function (index) {
+                layer.close(index);
+                del('destroy');
+            })
+        });
 
         // 当前是否为母单赋值
         if ('{$order.is_mother}' == 1){

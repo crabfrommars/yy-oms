@@ -52,15 +52,17 @@ class Order extends Base
 
             // 用户拥有查看全部订单的权限才能获取全部订单数据
             if ($user->haveRight('check_orders')){
+                $listAll4One=orderModel::where('id',$id)->select();
                 $list=orderModel::page($page,$limit)->where('id',$id)->select();
             }else{
+                $listAll4One=orderModel::where('salesman',Session::get('id'))->where('id',$id)->select();
                 $list=orderModel::page($page,$limit)
                     ->where('id',$id)
                     ->where('salesman',Session::get('id'))
                     ->select();
             }
 
-            $count=count($list);
+            $count=count($listAll4One);
             foreach ($list as $item){
                 $progress=Progress::where('value',$item['progress'])->find();
                 $salesMan=userModel::where('id',$item['salesman'])->find();
@@ -72,11 +74,17 @@ class Order extends Base
         }else{
             //分页获取数据
             if ($user->haveRight('check_orders')){
-                $list=orderModel::page($page,$limit)->order('update_time','desc')->select();
+                $list=orderModel::page($page,$limit)
+                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
+                    ->select();
             }else{
+                $listAll4One=orderModel::where('salesman',Session::get('id'))
+                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
+                    ->select();
+                $count=count($listAll4One);
                 $list=orderModel::page($page,$limit)
                     ->where('salesman',Session::get('id'))
-                    ->order('update_time','desc')
+                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
                     ->select();
             }
 
@@ -567,6 +575,31 @@ class Order extends Base
             $roles=$user->roles;
             foreach ($roles as $role){
                 if ($role->name == $progress->role){
+                    if ($_user->haveRight('edit_order_temp')){
+                        $res=true;
+                    };
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    public function canFlow()
+    {
+        $_user=new User();
+        $res=false;
+        if ($_user->haveRight('edit_order')){
+            $res=true;
+        }else{
+            $_progress=Request::request('progress');
+            $userId=Session::get('id');
+
+            $progress=Progress::where('value','=',$_progress)->find();
+            $user=userModel::get($userId);
+            $roles=$user->roles;
+            foreach ($roles as $role){
+                if ($role->name == $progress->role){
                     $res=true;
                 }
             }
@@ -746,8 +779,8 @@ class Order extends Base
     }
     public function test()
     {
-        $order=orderModel::onlyTrashed()->find(1);
-        $order->restore();
+        $order=orderModel::all();
+        dump($order);
     }
 
 }

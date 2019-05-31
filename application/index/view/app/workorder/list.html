@@ -12,76 +12,107 @@
 </head>
 <body>
 
-<div class="layui-fluid">
-    <div class="layui-card">
-        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">订单号</label>
-                    <div class="layui-input-block">
-                        <input id="order_id" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+<div class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">全部订单</li>
+        <li>母单</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+<!--            <div class="layui-fluid">-->
+                <div class="layui-card">
+                    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">订单号</label>
+                                <div class="layui-input-block">
+                                    <input id="order_id" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="LAY-app-order-search">
+                                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" id="LAY-app-system-order" lay-filter="LAY-app-system-order"></table>
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="LAY-app-order-search">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                    </button>
+<!--            </div>-->
+        </div>
+        <div class="layui-tab-item">
+            <div class="layui-card">
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form-item">
+
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table" id="mother_orders" lay-filter="mother_orders"></table>
                 </div>
             </div>
         </div>
-        <div class="layui-card-body">
-            <table class="layui-table" id="LAY-app-system-order" lay-filter="LAY-app-system-order"></table>
-            <script type="text/html" id="progressTpl">
-                <div class="layui-progress layuiadmin-order-progress" lay-filter="progress-" + {{ d.id }} +"" lay-showpercent="true">
-                {{# if(d.progress == '100%'){ }}
-                <div class="layui-progress-bar layui-inline" lay-percent={{d.progress}}></div>
-                {{# }else{ }}
-                <div class="layui-progress-bar layui-bg-blue" lay-percent={{d.progress}}></div>
-                {{# } }}
-                </div>
-            </script>
-            <script type="text/html" id="factory">
-                {{# if(d.factory === 'A'){ }}
-                <span>宇晗</span>
-                {{# }else if(d.factory === 'B'){ }}
-                <span>艾芯</span>
-                {{# }else if(d.factory === 'C'){ }}
-                <span>瑞研</span>
-                {{# }else if(d.factory === 'D'){ }}
-                <span>晟楠</span>
-                {{# }else if(d.factory === 'Y'){ }}
-                <span>宇扬</span>
-                {{# } }}
-            </script>
-            <script type="text/html" id="current_roleTpl">
-                {{# let str='{$Think.session.roles}'; }}
-                {{# let arr=str.split(' '); }}
-                {{# if (arr.indexOf(d.current_role)>-1){ }}
-                <span style="color: red;font-weight: bold">*{{d.current_role}}</span>
-                {{# }else{ }}
-                <span>{{d.current_role}}</span>
-                {{# } }}
-            </script>
-            <script type="text/html" id="order_typeTpl">
-              {{# if(d.order_type === '翻单'){ }}
-              <span style="color:#5FB878;">翻单</span>
-              {{# } else if(d.order_type === '成品单'){ }}
-              <span style="color:#01AAED;">成品单</span>
-              {{# } else { }}
-              <span style="color:#FF5722;">样品单</span>
-              {{# } }}
-            </script>
-            <script type="text/html" id="table-system-order">
-                <a class="layui-btn layui-btn-xs" lay-event="progress"><i
-                        class="layui-icon layui-icon-release"></i>流程</a>
-                <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="record"><i-->
-                        <!--class="layui-icon layui-icon-form"></i>历史</a>-->
-                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="senior"><i
-                        class="layui-icon layui-icon-senior"></i>高级</a>
-            </script>
-        </div>
     </div>
 </div>
+
+<script type="text/html" id="progressTpl">
+    <div class="layui-progress layuiadmin-order-progress" lay-filter="progress-" + {{ d.id }} +"" lay-showpercent="true">
+    {{# if(d.progress == '100%'){ }}
+    <div class="layui-progress-bar layui-inline" lay-percent={{d.progress}}></div>
+    {{# }else{ }}
+    <div class="layui-progress-bar layui-bg-blue" lay-percent={{d.progress}}></div>
+    {{# } }}
+    </div>
+</script>
+<script type="text/html" id="factory">
+    {{# if(d.factory === 'A'){ }}
+    <span>宇晗</span>
+    {{# }else if(d.factory === 'B'){ }}
+    <span>艾芯</span>
+    {{# }else if(d.factory === 'C'){ }}
+    <span>瑞研</span>
+    {{# }else if(d.factory === 'D'){ }}
+    <span>晟楠</span>
+    {{# }else if(d.factory === 'Y'){ }}
+    <span>宇扬</span>
+    {{# } }}
+</script>
+<script type="text/html" id="current_roleTpl">
+    {{# let str='{$Think.session.roles}'; }}
+    {{# let arr=str.split(' '); }}
+    {{# if (arr.indexOf(d.current_role)>-1){ }}
+        {{# if(d.current_role === '销售专员'){ }}
+            {{# if(d.salesman === '{$Think.session.name}'){ }}
+            <span style="color: red;font-weight: bold">*{{d.current_role}}</span>
+            {{# }else{ }}
+            <span>{{d.current_role}}</span>
+            {{# } }}
+        {{# }else{ }}
+        <span style="color: red;font-weight: bold">*{{d.current_role}}</span>
+        {{# } }}
+    {{# }else{ }}
+    <span>{{d.current_role}}</span>
+    {{# } }}
+</script>
+<script type="text/html" id="order_typeTpl">
+    {{# if(d.order_type === '翻单'){ }}
+    <span style="color:#5FB878;">翻单</span>
+    {{# } else if(d.order_type === '成品单'){ }}
+    <span style="color:#01AAED;">成品单</span>
+    {{# } else { }}
+    <span style="color:#FF5722;">样品单</span>
+    {{# } }}
+</script>
+<script type="text/html" id="table-system-order">
+    <a class="layui-btn layui-btn-xs" lay-event="progress"><i
+            class="layui-icon layui-icon-release"></i>流程</a>
+    <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="record"><i-->
+    <!--class="layui-icon layui-icon-form"></i>历史</a>-->
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="senior"><i
+            class="layui-icon layui-icon-senior"></i>高级</a>
+</script>
 
 <script src="/static/layuiadmin/layui/layui.js"></script>
 <script>
@@ -147,6 +178,25 @@
                 }
             });
         });
+
+        table.render({
+            elem:'#mother_orders'
+            , url:'/index/order/getMotherOrders'
+            , page:{
+                limit:10
+                , limits:[10,20,30]
+                , groups:5
+            }
+            , cols:[[
+                {field:'id', title:'编号', width:65, align:'center'}
+                , {field:'this_t6', title:'T6号', width:65, align:'center'}
+                , {field:'factory', title:'工厂', width:65, align:'center'}
+                , {field:'customer', title:'客户名', width:200}
+                , {field:'model', title:'型号', width:250}
+                , {field:'salesman', title:'业务员', width:90, align:'center'}
+                , {field:'quantity', title:'数量', width:65, align:'center'}
+            ]]
+        })
 
     });
 </script>

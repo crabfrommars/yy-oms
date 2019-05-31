@@ -16,7 +16,6 @@ use app\common\model\Reviews;
 use app\common\model\Options;
 use app\common\model\User as userModel;
 use app\index\controller\User;
-use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 use think\route\Rule;
@@ -34,6 +33,43 @@ class Order extends Base
      */
     public function order()
     {
+
+        // 根据用户角色和订单进度确定排序优先级
+        // 排出进度优先级
+        $proArr=[];
+        $proArrAllOrigin=[];
+        $currentUser=userModel::get(Session::get('id'));
+        $roles=$currentUser->roles;
+        foreach ($roles as $role){
+            $pros=Progress::where('role',$role->id)->select();
+            foreach ($pros as $p){
+                array_push($proArr,"'".$p->value."'");
+                array_push($proArrAllOrigin,$p->value);
+            }
+        }
+        $proAll=Progress::where('value','not in',$proArrAllOrigin)->select();
+        foreach ($proAll as $pro){
+            array_push($proArr,"'".$pro->value."'");
+        }
+
+        // 同进度下，salesman字段与用户id相同的优先
+        $userArr=[Session::get('id')];
+        $users=userModel::where('id','<>',Session::get('id'))->select();
+        foreach ($users as $user){
+            $roles=$user->roles;
+            foreach ($roles as $role){
+                if ($role->id === 13){
+                    array_push($userArr,$user->id);
+                }
+            }
+        }
+
+        // 将优先查询的进度数组拆成字符串
+        $wherePro=implode(",",$proArr);
+
+        // 将优先查询的id数组拆成字符串
+        $whereId=implode(",",$userArr);
+
         $list=orderModel::all();
         $count=count($list);
 
@@ -75,16 +111,22 @@ class Order extends Base
             //分页获取数据
             if ($user->haveRight('check_orders')){
                 $list=orderModel::page($page,$limit)
-                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
+                    ->orderRaw("field(progress,".$wherePro.")")
+                    ->orderRaw("field(salesman,".$whereId.")")
+//                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
                     ->select();
             }else{
                 $listAll4One=orderModel::where('salesman',Session::get('id'))
-                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
+                    ->orderRaw("field(progress,".$wherePro.")")
+                    ->orderRaw("field(salesman,".$whereId.")")
+//                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
                     ->select();
                 $count=count($listAll4One);
                 $list=orderModel::page($page,$limit)
                     ->where('salesman',Session::get('id'))
-                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
+                    ->orderRaw("field(progress,".$wherePro.")")
+                    ->orderRaw("field(salesman,".$whereId.")")
+//                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
                     ->select();
             }
 
@@ -100,6 +142,91 @@ class Order extends Base
 
         return json($result);
 
+    }
+
+    public function getMotherOrders()
+    {
+        $list=orderModel::where('is_mother','=',1)->select();
+        $count=count($list);
+
+        //获取每页显示条数
+        $limit=Request::get('limit');
+
+        //获取当前页数
+        $page=Request::get('page');
+
+        // 判断当前用户是否拥有查看全部订单的权限
+        $user=new User;
+
+        //获取搜索关键字
+        if (Request::request('id')){
+            $id=Request::request('id');
+
+            // 用户拥有查看全部订单的权限才能获取全部订单数据
+            if ($user->haveRight('check_orders')){
+                $listAll4One=orderModel::where('id',$id)
+                    ->order('create_time','desc')
+                    ->where('is_mother','=',1)
+                    ->select();
+                $list=orderModel::page($page,$limit)
+                    ->order('create_time','desc')
+                    ->where('id',$id)
+                    ->where('is_mother','=',1)
+                    ->select();
+            }else{
+                $listAll4One=orderModel::where('salesman',Session::get('id'))
+                    ->order('create_time','desc')
+                    ->where('id',$id)
+                    ->where('is_mother','=',1)
+                    ->select();
+                $list=orderModel::page($page,$limit)
+                    ->order('create_time','desc')
+                    ->where('id',$id)
+                    ->where('salesman',Session::get('id'))
+                    ->where('is_mother','=',1)
+                    ->select();
+            }
+
+            $count=count($listAll4One);
+            foreach ($list as $item){
+                $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
+                $item['current_role']=$progress['role'];
+                $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
+            }
+            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+        }else{
+            //分页获取数据
+            if ($user->haveRight('check_orders')){
+                $list=orderModel::page($page,$limit)
+                    ->order('create_time','desc')
+                    ->where('is_mother','=',1)
+                    ->select();
+            }else{
+                $listAll4One=orderModel::where('salesman',Session::get('id'))
+                    ->order('create_time','desc')
+                    ->where('is_mother','=',1)
+                    ->select();
+                $count=count($listAll4One);
+                $list=orderModel::page($page,$limit)
+                    ->order('create_time','desc')
+                    ->where('salesman',Session::get('id'))
+                    ->where('is_mother','=',1)
+                    ->select();
+            }
+
+            foreach ($list as $item){
+                $progress=Progress::where('value',$item['progress'])->find();
+                $salesMan=userModel::where('id',$item['salesman'])->find();
+                $item['current_role']=$progress['role'];
+                $item['current_content']=$progress['content'];
+                $item['salesman']=$salesMan['name'];
+            }
+            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+        }
+
+        return json($result);
     }
 
     /**
@@ -779,8 +906,7 @@ class Order extends Base
     }
     public function test()
     {
-        $order=orderModel::all();
-        dump($order);
+
     }
 
 }

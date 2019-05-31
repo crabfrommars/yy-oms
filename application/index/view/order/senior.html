@@ -61,6 +61,9 @@
                 , type:'POST'
                 , success:(res)=>{
                     if (res.code === 0){
+                        $.ajax({
+                            url:'/index/order/sendMsg'
+                        });
                         parent.layer.msg(res.msg,{icon:1});
                         parent.layer.close(index);
                         parent.layui.table.reload('LAY-app-system-order');
@@ -134,7 +137,8 @@
                             , type:'POST'
                             , success:(res)=>{
                                 if (res.status === 1){
-                                    layer.msg(res.message,{icon:1})
+                                    layer.msg(res.message,{icon:1});
+                                    parent.layui.table.reload('mother_orders');
                                 } else if(res.status === 0){
                                     layer.msg(res.message,{icon:2})
                                 }

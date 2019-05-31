@@ -227,7 +227,7 @@
         // 服务端主动推送消息时会触发这里的onmessage
         ws.onmessage = function (e) {
             // json数据转换成js对象
-            let data = eval("(" + e.data + ")");
+            let data = eval("("  + e.data + ")");
             let type = data.type || '';
             switch (type) {
                 // Events.php中返回的init类型的消息，将client_id发给后台进行uid绑定

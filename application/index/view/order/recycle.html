@@ -16,17 +16,17 @@
     <div class="layui-card">
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">工号</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <button class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                    </button>
-                </div>
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">工号</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-inline">-->
+<!--                    <button class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="">-->
+<!--                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>-->
+<!--                    </button>-->
+<!--                </div>-->
             </div>
         </div>
         <div class="layui-card-body">
@@ -54,11 +54,11 @@
                 , group:5
             }
             , cols:[[
-                {field:'id', width:70, align:'center', title:'编号', fixed:'left'}
-                , {field:'customer', title:'客户名', width:180}
-                , {field:'model', title:'型号', width:180}
+                {field:'id', width:65, align:'center', title:'编号', fixed:'left'}
+                , {field:'customer', title:'客户名', width:200}
+                , {field:'model', title:'型号', width:250}
                 , {field:'salesman', title:'业务员', width:75, align:'center'}
-                , {field:'quantity', title:'数量', width:60, align:'center'}
+                , {field:'quantity', title:'数量', width:65, align:'center'}
                 , {title:'操作', width:150, align:'center', toolbar:'#recTool'}
             ]]
             , text:{
@@ -77,6 +77,9 @@
                         , type:'POST'
                         , success:(res)=>{
                             if (res.code === 0){
+                                $.ajax({
+                                    url:'/index/order/sendMsg'
+                                });
                                 layer.msg(res.msg,{icon:1});
                                 table.reload('recycle')
                             }else if (res.code === 1){
@@ -97,6 +100,9 @@
                         , type:'POST'
                         , success:(res)=>{
                             if (res.code === 0){
+                                $.ajax({
+                                    url:'/index/order/sendMsg'
+                                });
                                 layer.msg(res.msg,{icon:1});
                                 table.reload('recycle')
                             }else if (res.code === 1 || res.code === 2){

@@ -66,19 +66,23 @@
 
         //新增记录
         $('#insert').click(function () {
-            $.ajax({
-               data:''
-               ,url:'/index/drawing/insert'
-               ,type:'POST'
-               ,success:function (res) {
-                    if (res.code === 2){
-                        layer.msg(res.msg);
-                    } else {
-                        layer.msg(res.msg);
-                        table.reload('drawing');
+            layer.confirm('确定吗',{icon:3,title:'提示'},function (index) {
+                $.ajax({
+                    data:''
+                    ,url:'/index/drawing/insert'
+                    ,type:'POST'
+                    ,success:function (res) {
+                        if (res.code === 0){
+                            layer.msg(res.msg,{icon:1});
+                            table.reload('drawing');
+                        } else {
+                            layer.msg(res.msg,{icon:2});
+                        }
                     }
-                }
+                });
+                layer.close(index);
             });
+
         });
 
         //渲染表格
@@ -110,29 +114,48 @@
             //根据event对记录操作
             switch (layEvent){
                 case 'edit':
-                    layer.open({
-                       type:2
-                       , title:'编辑图纸'
-                       , content:'/index/drawing/drawingedit?id='+data.id+'&address='+data.address
-                       , area:['450px','450px']
-                       , btn:['提交','取消']
-                       , btnAlign:'c'
-                       , yes:function (index,layero) {
-                            table.reload('drawing');
-                            layer.close(index);
+                    $.ajax({
+                        url:'/index/user/haveRight'
+                        , data:{
+                            'reqRight':'edit_drawing'
+                        }
+                        , type:'GET'
+                        , success:(res)=>{
+                            if (res){
+                                layer.open({
+                                    type:2
+                                    , title:'编辑图纸'
+                                    , content:'/index/drawing/drawingedit?id='+data.id+'&address='+data.address
+                                    , area:['450px','450px']
+                                    , btn:['提交','取消']
+                                    , btnAlign:'c'
+                                    , yes:function (index,layero) {
+                                        table.reload('drawing');
+                                        layer.close(index);
+                                    }
+                                });
+                            } else {
+                                layer.msg('你没有相应的权限',{icon:2});
+                            }
                         }
                     });
+
                     break;
                 case 'delRecord':
                     layer.confirm('文件和记录都将被删除',{icon:3,title:'警告'},function (index) {
                         // console.log(data);
                         $.ajax({
                             data:data
-                            ,url:'/index/drawing/delRecord'
-                            ,type:'POST'
-                            ,success:function (res) {
-                                layer.msg(res.msg);
-                                table.reload('drawing');
+                            , url:'/index/drawing/delRecord'
+                            , type:'POST'
+                            , success:function (res) {
+                                if (res.code === 0){
+                                    layer.msg(res.msg,{icon:1});
+                                    table.reload('drawing');
+                                }else {
+                                    layer.msg(res.msg,{icon:2});
+                                }
+
                             }
                         });
                         layer.close(index);

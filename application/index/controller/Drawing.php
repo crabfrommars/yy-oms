@@ -132,51 +132,63 @@ class Drawing extends Base
      */
     public function delFileOnly()
     {
-        $data=Request::request();
-        $address=iconv('utf-8','gbk',$data['address']);
-        $id=$data['id'];
-        $file=Env::get('address').'public'.$address;
-        if (Drawings::get($id)){
-            Drawings::update(['id'=>$id,'name'=>'','address'=>'']);
-        }
-        if (file_exists($file)){
-            unlink($file);
-            $res=[
-              'code'=>0,
-              'msg'=>'删除成功'
-            ];
+        $user=new User();
+        if($user->haveRight('delete_drawing')){
+            $data=Request::request();
+            $address=iconv('utf-8','gbk',$data['address']);
+            $id=$data['id'];
+            $file=Env::get('address').'public'.$address;
+            if (Drawings::get($id)){
+                Drawings::update(['id'=>$id,'name'=>'','address'=>'']);
+            }
+            if (file_exists($file)){
+                unlink($file);
+                $res=[
+                    'code'=>0,
+                    'msg'=>'删除成功'
+                ];
+            }else{
+                $res=[
+                    'code'=>1,
+                    'msg'=>'操作失败，请检查'
+                ];
+            }
         }else{
-            $res=[
-              'code'=>1,
-              'msg'=>'操作失败，请检查'
-            ];
-        }
+            $res=['code'=>2,'msg'=>'你没有相应的权限'];
+        };
+
         return $res;
     }
 
     public function delRecord()
     {
-        $data=Request::request();
-        $id=$data['id'];
-        $res=[];
-        if (""!==$data['address']){
-            $address=iconv('utf-8','gbk',$data['address']);
-            $file=Env::get('root_path').'public'.$address;
+        $user=new User();
+        if($user->haveRight('delete_drawing')){
+            $data=Request::request();
+            $id=$data['id'];
+            $res=[];
+            if (""!==$data['address']){
+                $address=iconv('utf-8','gbk',$data['address']);
+                $file=Env::get('root_path').'public'.$address;
 
-            //删除文件
-            if (file_exists($file)){
-                unlink($file);
+                //删除文件
+                if (file_exists($file)){
+                    unlink($file);
+                }
             }
+            //删除记录
+            if (Drawings::get($id)){
+                $drawing=Drawings::get($id);
+                $drawing->delete();
+                $res=[
+                    'code'=>0,
+                    'msg'=>'成功删除'
+                ];
+            }
+        }else{
+            $res=['code'=>2,'msg'=>'你没有相应的权限'];
         }
-        //删除记录
-        if (Drawings::get($id)){
-            $drawing=Drawings::get($id);
-            $drawing->delete();
-            $res=[
-              'code'=>0,
-              'msg'=>'成功删除'
-            ];
-        }
+
         return $res;
     }
 

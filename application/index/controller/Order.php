@@ -83,22 +83,40 @@ class Order extends Base
         $user=new User;
 
         //获取搜索关键字
-        if (Request::request('id')){
-            $id=Request::request('id');
+        if (Request::request('targetField') && Request::request('targetValue')){
+            $targetField=Request::request('targetField');
+            if ($targetField === 'id' || $targetField === 'this_t6'){
+                $targetValue=Request::request('targetValue');
 
-            // 用户拥有查看全部订单的权限才能获取全部订单数据
-            if ($user->haveRight('check_orders')){
-                $listAll4One=orderModel::where('id',$id)->select();
-                $list=orderModel::page($page,$limit)->where('id',$id)->select();
-            }else{
-                $listAll4One=orderModel::where('salesman',Session::get('id'))->where('id',$id)->select();
-                $list=orderModel::page($page,$limit)
-                    ->where('id',$id)
-                    ->where('salesman',Session::get('id'))
-                    ->select();
+                // 用户拥有查看全部订单的权限才能获取全部订单数据
+                if ($user->haveRight('check_orders')){
+                    $listAll4One=orderModel::where($targetField,$targetValue)->select();
+                    $list=orderModel::page($page,$limit)->where($targetField,$targetValue)->select();
+                }else{
+                    $listAll4One=orderModel::where('salesman',Session::get('id'))->where($targetField,$targetValue)->select();
+                    $list=orderModel::page($page,$limit)
+                        ->where($targetField,$targetValue)
+                        ->where('salesman',Session::get('id'))
+                        ->select();
+                }
+                $count=count($listAll4One);
+            }else {
+                $targetValue=Request::request('targetValue');
+
+                // 用户拥有查看全部订单的权限才能获取全部订单数据
+                if ($user->haveRight('check_orders')){
+                    $listAll4One=orderModel::where($targetField,'like','%'.$targetValue.'%')->select();
+                    $list=orderModel::page($page,$limit)->where($targetField,'like','%'.$targetValue.'%')->select();
+                }else{
+                    $listAll4One=orderModel::where('salesman',Session::get('id'))->where($targetField,'like','%'.$targetValue.'%')->select();
+                    $list=orderModel::page($page,$limit)
+                        ->where($targetField,'like','%'.$targetValue.'%')
+                        ->where('salesman',Session::get('id'))
+                        ->select();
+                }
+                $count=count($listAll4One);
             }
 
-            $count=count($listAll4One);
             foreach ($list as $item){
                 $progress=Progress::where('value',$item['progress'])->find();
                 $salesMan=userModel::where('id',$item['salesman'])->find();
@@ -159,32 +177,62 @@ class Order extends Base
         $user=new User;
 
         //获取搜索关键字
-        if (Request::request('id')){
-            $id=Request::request('id');
+        if (Request::request('targetField') && Request::request('targetValue')){
+            $targetField=Request::request('targetField');
+            if ($targetField === 'id' || $targetField === 'this_t6'){
+                $targetValue=Request::request('targetValue');
 
-            // 用户拥有查看全部订单的权限才能获取全部订单数据
-            if ($user->haveRight('check_orders')){
-                $listAll4One=orderModel::where('id',$id)
-                    ->order('create_time','desc')
-                    ->where('is_mother','=',1)
-                    ->select();
-                $list=orderModel::page($page,$limit)
-                    ->order('create_time','desc')
-                    ->where('id',$id)
-                    ->where('is_mother','=',1)
-                    ->select();
+                // 用户拥有查看全部订单的权限才能获取全部订单数据
+                if ($user->haveRight('check_orders')){
+                    $listAll4One=orderModel::where($targetField,$targetValue)
+                        ->order('create_time','desc')
+                        ->where('is_mother','=',1)
+                        ->select();
+                    $list=orderModel::page($page,$limit)
+                        ->order('create_time','desc')
+                        ->where($targetField,$targetValue)
+                        ->where('is_mother','=',1)
+                        ->select();
+                }else{
+                    $listAll4One=orderModel::where('salesman',Session::get('id'))
+                        ->order('create_time','desc')
+                        ->where($targetField,$targetValue)
+                        ->where('is_mother','=',1)
+                        ->select();
+                    $list=orderModel::page($page,$limit)
+                        ->order('create_time','desc')
+                        ->where($targetField,$targetValue)
+                        ->where('salesman',Session::get('id'))
+                        ->where('is_mother','=',1)
+                        ->select();
+                }
             }else{
-                $listAll4One=orderModel::where('salesman',Session::get('id'))
-                    ->order('create_time','desc')
-                    ->where('id',$id)
-                    ->where('is_mother','=',1)
-                    ->select();
-                $list=orderModel::page($page,$limit)
-                    ->order('create_time','desc')
-                    ->where('id',$id)
-                    ->where('salesman',Session::get('id'))
-                    ->where('is_mother','=',1)
-                    ->select();
+                $targetValue=Request::request('targetValue');
+
+                // 用户拥有查看全部订单的权限才能获取全部订单数据
+                if ($user->haveRight('check_orders')){
+                    $listAll4One=orderModel::where($targetField,'like','%'.$targetValue.'%')
+                        ->order('create_time','desc')
+                        ->where('is_mother','=',1)
+                        ->select();
+                    $list=orderModel::page($page,$limit)
+                        ->order('create_time','desc')
+                        ->where($targetField,'like','%'.$targetValue.'%')
+                        ->where('is_mother','=',1)
+                        ->select();
+                }else{
+                    $listAll4One=orderModel::where('salesman',Session::get('id'))
+                        ->order('create_time','desc')
+                        ->where($targetField,'like','%'.$targetValue.'%')
+                        ->where('is_mother','=',1)
+                        ->select();
+                    $list=orderModel::page($page,$limit)
+                        ->order('create_time','desc')
+                        ->where($targetField,'like','%'.$targetValue.'%')
+                        ->where('salesman',Session::get('id'))
+                        ->where('is_mother','=',1)
+                        ->select();
+                }
             }
 
             $count=count($listAll4One);
@@ -643,6 +691,9 @@ class Order extends Base
         }
         $order->wires=implode(',',$newWires);
 
+        $salesman=userModel::get($order->salesman);
+        $order->salesman=$salesman->name;
+
         // 将订单数据赋值给模板
         $this->assign('order',$order);
 
@@ -765,7 +816,12 @@ class Order extends Base
      */
     public function renderRepeat()
     {
-        return $this->view->fetch('/order/repeat');
+        $user=new User();
+        if ($user->haveRight('repeat_order')){
+            return $this->view->fetch('/order/repeat');
+        }else{
+            return $this->view->fetch('/user/noright');
+        }
     }
 
     public function sendMsg()

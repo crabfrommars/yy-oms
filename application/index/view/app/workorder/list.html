@@ -225,6 +225,17 @@
             });
         });
 
+        table.on('sort(LAY-app-system-order)',function (obj) {
+            // console.log(obj.type);
+           table.reload('LAY-app-system-order',{
+               initSort: obj
+               , where:{
+                   field:obj.field
+                   , order:obj.type
+               }
+           });
+        });
+
         table.render({
             elem:'#mother_orders'
             , url:'/index/order/getMotherOrders'

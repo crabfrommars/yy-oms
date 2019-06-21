@@ -117,14 +117,39 @@ class Order extends Base
                 $count=count($listAll4One);
             }
 
-            foreach ($list as $item){
-                $progress=Progress::where('value',$item['progress'])->find();
-                $salesMan=userModel::where('id',$item['salesman'])->find();
-                $item['current_role']=$progress['role'];
-                $item['current_content']=$progress['content'];
-                $item['salesman']=$salesMan['name'];
+//            foreach ($list as $item){
+//                $progress=Progress::where('value',$item['progress'])->find();
+//                $salesMan=userModel::where('id',$item['salesman'])->find();
+//                $item['current_role']=$progress['role'];
+//                $item['current_content']=$progress['content'];
+//                $item['salesman']=$salesMan['name'];
+//            }
+//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+        }elseif (Request::request('field') && Request::request('order')){ // 收到排序请求
+            $orderField=Request::request('field');
+            $orderType=Request::request('order');
+            if ($user->haveRight('check_orders')){
+                $list=orderModel::page($page,$limit)
+                    ->order($orderField,$orderType)
+                    ->select();
+            }else{
+                $listAll4One=orderModel::where('salesman',Session::get('id'))
+                    ->order($orderField,$orderType)
+                    ->select();
+                $count=count($listAll4One);
+                $list=orderModel::page($page,$limit)
+                    ->where('salesman',Session::get('id'))
+                    ->order($orderField,$orderType)
+                    ->select();
             }
-            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+//            foreach ($list as $item){
+//                $progress=Progress::where('value',$item['progress'])->find();
+//                $salesMan=userModel::where('id',$item['salesman'])->find();
+//                $item['current_role']=$progress['role'];
+//                $item['current_content']=$progress['content'];
+//                $item['salesman']=$salesMan['name'];
+//            }
+//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }else{
             //分页获取数据
             if ($user->haveRight('check_orders')){
@@ -148,15 +173,24 @@ class Order extends Base
                     ->select();
             }
 
-            foreach ($list as $item){
-                $progress=Progress::where('value',$item['progress'])->find();
-                $salesMan=userModel::where('id',$item['salesman'])->find();
-                $item['current_role']=$progress['role'];
-                $item['current_content']=$progress['content'];
-                $item['salesman']=$salesMan['name'];
-            }
-            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
+//            foreach ($list as $item){
+//                $progress=Progress::where('value',$item['progress'])->find();
+//                $salesMan=userModel::where('id',$item['salesman'])->find();
+//                $item['current_role']=$progress['role'];
+//                $item['current_content']=$progress['content'];
+//                $item['salesman']=$salesMan['name'];
+//            }
+//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }
+
+        foreach ($list as $item){
+            $progress=Progress::where('value',$item['progress'])->find();
+            $salesMan=userModel::where('id',$item['salesman'])->find();
+            $item['current_role']=$progress['role'];
+            $item['current_content']=$progress['content'];
+            $item['salesman']=$salesMan['name'];
+        }
+        $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
 
         return json($result);
 
@@ -713,7 +747,7 @@ class Order extends Base
     {
         $shellType=Options::where('type','=','shell_type')->select();
         $shellColor=Options::where('type','=','shell_color')->select();
-        $mos=Options::where('type','=','mos')->select();
+        $mos=Options::where('type','=','mos')->order('sn','asc')->select();
         $board=Options::where('type','=','board')->select();
         $normalFunc=Options::where('type','=','normal_func')->select();
         $specialFunc=Options::where('type','=','special_func')->select();

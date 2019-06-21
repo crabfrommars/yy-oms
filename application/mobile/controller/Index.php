@@ -8,9 +8,8 @@
 
 namespace app\mobile\controller;
 use app\common\controller\Base;
-use app\common\model\Controller;
 use app\common\model\Order;
-use think\Db;
+use app\common\model\ProductRecord;
 use think\facade\Request;
 
 class Index extends Base
@@ -29,13 +28,24 @@ class Index extends Base
 
     public function getProductInfo()
     {
-        $productSn=Request::request('product_sn');
-        $productRecord=Db::connect('other1')->table('product_record');
-        $query=$productRecord->where('product_sn',$productSn)->find();
-        if ($query){
-            $res=['code'=>0,'msg'=>'查询成功','product'=>$query];
+        $data=Request::request();
+        $orderId=$data['orderId'];
+        $productSn=$data['product_sn'];
+        $productRecord=new ProductRecord();
+
+        $proInfo=$productRecord->where('product_sn',$productSn)->find();
+        $orderInfo=Order::where('id',$orderId)->find();
+
+        $srcArr=['https://oms.yuyangking.com/static/instructions/1.png'];
+        $imgSrc=$srcArr[0];
+        if ($proInfo && $orderInfo){
+            $orderInfo->vol1=$orderInfo->vol1.'V';
+            $orderInfo->amp1=$orderInfo->amp1.'A';
+            $orderInfo->undervoltage1=$orderInfo->undervoltage1.'V';
+            $orderInfo->functions='功能1，功能2';
+            $res=['code'=>0,'msg'=>'查询成功','proInfo'=>$proInfo,'orderInfo'=>$orderInfo,'imgSrc'=>$imgSrc,'srcArr'=>$srcArr];
         }else{
-            $res=['code'=>1,'msg'=>'未找到该产品','product'=>null];
+            $res=['code'=>1,'msg'=>'未找到该产品','proInfo'=>null,'orderInfo'=>null,'imgSrc'=>null,'srcArr'=>null];
         }
         return json($res);
     }

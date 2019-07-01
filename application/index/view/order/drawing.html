@@ -11,60 +11,101 @@
     <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
 </head>
 <body>
-<div class="layui-fluid">
-    <div class="layui-card">
-        <div class="layui-card-header layuiadmin-card-header-auto">
-            <div class="layui-form">
-                <div class="layui-form-item">
-<!--                    <div class="layui-inline">-->
-<!--                        <div class="layui-input-inline">-->
-<!--                            <select name="" id="">-->
-<!--                                <option value="">全部</option>-->
-<!--                                <option value="">标准</option>-->
-<!--                                <option value="">定制</option>-->
-<!--                                <option value="">其他</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                    </div>-->
-                    <div class="layui-inline">
-                        <label class="layui-form-label">图纸号</label>
-                        <div class="layui-input-block">
-                            <input id="dId" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+
+<div class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">图纸</li>
+        <li>说明书</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="layui-card">
+                <div class="layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <!--                    <div class="layui-inline">-->
+                            <!--                        <div class="layui-input-inline">-->
+                            <!--                            <select name="" id="">-->
+                            <!--                                <option value="">全部</option>-->
+                            <!--                                <option value="">标准</option>-->
+                            <!--                                <option value="">定制</option>-->
+                            <!--                                <option value="">其他</option>-->
+                            <!--                            </select>-->
+                            <!--                        </div>-->
+                            <!--                    </div>-->
+                            <div class="layui-inline">
+                                <label class="layui-form-label">图纸编号</label>
+                                <div class="layui-input-block">
+                                    <input id="dId" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="searchDrawing">
+                                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <button id="search" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="searchDrawing">
-                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                </div>
+                <div class="layui-card-body">
+                    <table id="drawing" lay-filter="drawing"></table>
+                    <div class="layui-btn-container" style="padding: 10px 0 0 0">
+                        <button type="button" class="layui-btn layui-btn-normal" id="insert">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            新增记录
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="layui-card-body">
-            <table id="drawing" lay-filter="drawing"></table>
-            <div class="layui-btn-container" style="padding: 10px 0 0 0">
-                <button type="button" class="layui-btn layui-btn-normal" id="insert">
-                    <i class="layui-icon layui-icon-add-1"></i>
-                    新增记录
-                </button>
+        <div class="layui-tab-item">
+            <div class="layui-card">
+                <div class="layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">说明书编号</label>
+                                <div class="layui-input-block">
+                                    <input id="instructionNum" type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button id="searchInst" class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="searchInstruction">
+                                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <table id="instructions" lay-filter="instructions"></table>
+                    <div class="layui-btn-container" style="padding: 10px 0 0 0">
+                        <button id="insertInst" type="button" class="layui-btn layui-btn-normal">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            新增记录
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="/static/layuiadmin/layui/layui.js"></script>
 <script>
     layui.config({
         base: '/static/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['upload', 'table','layer','form'], function () {
+    }).use(['upload', 'table','layer','form','element'], function () {
         var $ = layui.$
             , upload = layui.upload
             , table = layui.table
             , layer=layui.layer
-            , form=layui.form;
+            , form=layui.form
+            , element=layui.element;
 
-        //新增记录
+        // 新增图纸记录
         $('#insert').click(function () {
             layer.confirm('确定吗',{icon:3,title:'提示'},function (index) {
                 $.ajax({
@@ -85,7 +126,28 @@
 
         });
 
-        //渲染表格
+        // 新增说明书记录
+        $('#insertInst').click(function () {
+            layer.confirm('确定吗',{icon:3,title:'提示'},function (index) {
+                $.ajax({
+                    data:''
+                    ,url:'/index/instruction/insert'
+                    ,type:'POST'
+                    ,success:function (res) {
+                        if (res.code === 0){
+                            layer.msg(res.msg,{icon:1});
+                            table.reload('instructions');
+                        } else {
+                            layer.msg(res.msg,{icon:2});
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+
+        });
+
+        // 渲染图纸表格
         table.render({
             elem: '#drawing'
             , text:{
@@ -104,11 +166,30 @@
             ]]
         });
 
-        //监听工具条
+        // 渲染说明书表格
+        table.render({
+            elem:'#instructions'
+            , text:{
+                none:'无数据'
+            }
+            , id:'instructions'
+            , url:'/index/instruction/getInstructionsData'
+            , page:{
+                limit:10
+                , limits:[10,20]
+            }
+            , cols:[[
+                {field: 'id', title: '编号', width: 60, fixed: 'left', align: 'center'}
+                , {field: 'name', title: '名称', width: 400, templet: '#drawingLink'}
+                , {field: 'update_time', title: '更新时间', width: 130, align: 'center'}
+                , {title:'操作', fixed: 'right', width: 150, align: 'center', toolbar: '#barDrawing'}
+            ]]
+        });
+
+        // 监听图纸表格的工具条
         table.on('tool(drawing)',function (obj) {
             var data=obj.data;
             var layEvent=obj.event;
-            var tr=obj.tr;
             // console.log(data);
 
             //根据event对记录操作
@@ -165,19 +246,97 @@
 
         });
 
+        // 监听说明书表格的工具条
+        table.on('tool(instructions)',function (obj) {
+            var data=obj.data;
+            var layEvent=obj.event;
+            // console.log(data);
+
+            //根据event对记录操作
+            switch (layEvent){
+                case 'edit':
+                    $.ajax({
+                        url:'/index/user/haveRight'
+                        , data:{
+                            'reqRight':'edit_instruction'
+                        }
+                        , type:'GET'
+                        , success:(res)=>{
+                            if (res){
+                                layer.open({
+                                    type:2
+                                    , title:'编辑说明书'
+                                    , content:'/index/instruction/instructionEdit?id='+data.id+'&address='+data.address
+                                    , area:['450px','450px']
+                                    , btn:['提交','取消']
+                                    , btnAlign:'c'
+                                    , yes:function (index,layero) {
+                                        table.reload('instructions');
+                                        layer.close(index);
+                                    }
+                                });
+                            } else {
+                                layer.msg('你没有相应的权限',{icon:2});
+                            }
+                        }
+                    });
+
+                    break;
+                case 'delRecord':
+                    layer.confirm('文件和记录都将被删除',{icon:3,title:'警告'},function (index) {
+                        // console.log(data);
+                        $.ajax({
+                            data:data
+                            , url:'/index/instruction/delRecord'
+                            , type:'POST'
+                            , success:function (res) {
+                                if (res.code === 0){
+                                    layer.msg(res.msg,{icon:1});
+                                    table.reload('instructions');
+                                }else {
+                                    layer.msg(res.msg,{icon:2});
+                                }
+
+                            }
+                        });
+                        layer.close(index);
+                    });
+                    break;
+            }
+
+        });
+
         $("#dId").focus();
         $("#dId").keydown(function (e) {
             if (e.keyCode === 13){
                 $("#search").click();
             }
         });
+        $("#instructionNum").keydown(function (e) {
+            if (e.keyCode === 13){
+                $("#searchInst").click();
+            }
+        });
 
-        // 搜索
+        // 搜索图纸
         form.on('submit(searchDrawing)', function (data) {
             let field = data.field;
 
             //执行重载
             table.reload('drawing', {
+                where: field
+                , page: {
+                    curr: 1 //重新从第一页开始
+                }
+            });
+        });
+
+        // 搜索说明书
+        form.on('submit(searchInstruction)', function (data) {
+            let field = data.field;
+
+            //执行重载
+            table.reload('instructions', {
                 where: field
                 , page: {
                     curr: 1 //重新从第一页开始

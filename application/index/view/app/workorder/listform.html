@@ -549,6 +549,14 @@
             <textarea id="remark" name="remark" class="layui-textarea my-input">{$order.remark}</textarea>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">说明书编号</label>
+        <div class="layui-input-inline">
+            <input id="instruction_num" name="instruction_num" onkeyup="ReplaceDot(this)" type="text" class="layui-input my-input">
+        </div>
+        <span class="layui-badge-rim layui-bg-red">注：多个说明书编号必须用英文逗号 "," 隔开，否则会导致微信小程序无法加载对应图片</span>
+        <span class="layui-badge-rim layui-bg-red">控件已自动将中文逗号转换为英文，但不排除失效的可能，请谨慎检查</span>
+    </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">研发备注</label>
         <div class="layui-input-block">
@@ -577,6 +585,18 @@
     // 只允许1位小数点
     function myMatch(e) {
         e.value = e.value.toString().match(/^\d+(?:\.\d{0,1})?/)
+    }
+
+    // 中文逗号转英文
+    function ReplaceDot(obj)
+    {
+        var oldValue=obj.value;
+        while(oldValue.indexOf("，")!=-1)//寻找每一个中文逗号，并替换
+        {
+            obj.value=oldValue.replace("，",",");
+            oldValue=obj.value;
+        }
+        obj.value = oldValue;
     }
 
     layui.config({
@@ -800,6 +820,7 @@
                         , "wire_guard": res.order.wire_guard
                         , "wire_reverse": res.order.wire_reverse
                         , "wire_gear": res.order.wire_gear
+                        , "instruction_num":res.order.instruction_num
                         , "create_time": res.order.create_time
                         , "update_time": res.order.update_time
                     });

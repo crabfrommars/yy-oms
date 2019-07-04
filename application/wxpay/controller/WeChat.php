@@ -105,8 +105,80 @@ class WeChat extends Base
      */
     public function payResult()
     {
-        $data=Request::request();
-        dump($data);
+        // 接收微信的通知
+        $xml=Request::request();
+
+        // 如果没有数据，返回失败
+        if (empty($xml)){
+            return false;
+        }
+
+        // 有数据则验证签名
+        // 将通知结果转换为数组
+        $notifyArr=$this->xml2array($xml);
+
+        // 通信成功且交易成功
+        if ($notifyArr['return_code'] == 'SUCCESS' && $notifyArr['result_code'] == 'SUCCESS'){
+            // 对数据进行一次签名
+            $mySign=$this->sign($notifyArr);
+
+            // 校验签名是否一致
+            if ($mySign === $notifyArr['sign']){
+                // 查询订单
+                $res=$this->order($notifyArr['transaction_id']);
+
+                // 若查询订单已完成且金额与通知金额一致
+                if ($res['trade_state'] == 'SUCCESS' && $res['total_fee'] == $notifyArr['total_fee']){
+                    // 设定要返回给微信的参数
+                    $options=[
+                        'return_code'=>'SUCCESS'
+                        , 'return_msg'=>'OK'
+                    ];
+
+                    // 参数转为xml
+                    $response=$this->array2xml($options);
+
+                    // 返回参数
+                    return $response;
+                }
+            };
+        }
+
+    }
+
+    /**查询订单
+     * @param $transactionId
+     * @return mixed
+     */
+    private function order($transactionId)
+    {
+        $url='https://api.mch.weixin.qq.com/pay/orderquery';  // 查询订单接口
+
+        // 设定请求参数(不包含签名)
+        $options=[
+            'appid'=>$this->appid
+            , 'mch_id'=>$this->mchId
+            , 'transaction_id'=>$transactionId
+            , 'nonce_str'=>$this->getRandomStr(32)
+        ];
+
+        // 对参数签名
+        $sign=$this->sign($options);
+
+        // 将签名加入到参数中
+        $options['sign']=$sign;
+
+        // 将参数转换为xml格式
+        $xml=$this->array2xml($options);
+
+        // 发送请求
+        $res=$this->postXmlCurl('',$xml,$url);
+
+        // 将结果转换为数组
+        $result=$this->xml2array($res);
+
+        // 返回结果
+        return $result;
     }
 
     /**
@@ -385,11 +457,7 @@ class WeChat extends Base
 
     public function test2()
     {
-        $code='021wUUDb1oFoMx0YkhBb1uz4Eb1wUUD8';
-
-        $this->url='https://api.weixin.qq.com/sns/jscode2session?appid='.$this->appid.'&secret='.$this->appsecret.'&js_code='.$code.'&grant_type=authorization_code';
-        $res=file_get_contents($this->url);
-//        return json_encode($res);
-        dump(json_decode($res,true));
+        $res=$this->order('4200000331201907045140182519');
+        dump($res);
     }
 }

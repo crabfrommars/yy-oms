@@ -117,14 +117,6 @@ class Order extends Base
                 $count=count($listAll4One);
             }
 
-//            foreach ($list as $item){
-//                $progress=Progress::where('value',$item['progress'])->find();
-//                $salesMan=userModel::where('id',$item['salesman'])->find();
-//                $item['current_role']=$progress['role'];
-//                $item['current_content']=$progress['content'];
-//                $item['salesman']=$salesMan['name'];
-//            }
-//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }elseif (Request::request('field') && Request::request('order')){ // 收到排序请求
             $orderField=Request::request('field');
             $orderType=Request::request('order');
@@ -142,14 +134,6 @@ class Order extends Base
                     ->order($orderField,$orderType)
                     ->select();
             }
-//            foreach ($list as $item){
-//                $progress=Progress::where('value',$item['progress'])->find();
-//                $salesMan=userModel::where('id',$item['salesman'])->find();
-//                $item['current_role']=$progress['role'];
-//                $item['current_content']=$progress['content'];
-//                $item['salesman']=$salesMan['name'];
-//            }
-//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }else{
             //分页获取数据
             if ($user->haveRight('check_orders')){
@@ -172,20 +156,21 @@ class Order extends Base
 //                    ->orderRaw("field(progress,'0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','95%','100%')")
                     ->select();
             }
-
-//            foreach ($list as $item){
-//                $progress=Progress::where('value',$item['progress'])->find();
-//                $salesMan=userModel::where('id',$item['salesman'])->find();
-//                $item['current_role']=$progress['role'];
-//                $item['current_content']=$progress['content'];
-//                $item['salesman']=$salesMan['name'];
-//            }
-//            $result=["code"=>0,"msg"=>"成功","count"=>$count,"data"=>$list];
         }
 
         foreach ($list as $item){
+            $factoryArr=[];
             $progress=Progress::where('value',$item['progress'])->find();
             $salesMan=userModel::where('id',$item['salesman'])->find();
+            // 工厂
+            $factory1=Options::where('type','factory')->where('value',$item['factory'])->find();
+            $factory2=Options::where('type','factory')->where('value',$item['factory2'])->find();
+            $factory3=Options::where('type','factory')->where('value',$item['factory3'])->find();
+            $factory1?array_push($factoryArr,$factory1->short):'';
+            $factory2?array_push($factoryArr,$factory2->short):'';
+            $factory3?array_push($factoryArr,$factory3->short):'';
+
+            $item['factories']=implode($factoryArr,',');
             $item['current_role']=$progress['role'];
             $item['current_content']=$progress['content'];
             $item['salesman']=$salesMan['name'];
@@ -725,8 +710,17 @@ class Order extends Base
         }
         $order->wires=implode(',',$newWires);
 
+        // 业务员
         $salesman=userModel::get($order->salesman);
         $order->salesman=$salesman->name;
+
+        // 工厂
+        $factory1=Options::where('type','factory')->where('value',$order->factory)->find();
+        $factory2=Options::where('type','factory')->where('value',$order->factory2)->find();
+        $factory3=Options::where('type','factory')->where('value',$order->factory3)->find();
+        $factory1?$order->factory=$factory1->text:$order->factory='';
+        $factory2?$order->factory2=$factory2->text:$order->factor2='';
+        $factory3?$order->factory3=$factory3->text:$order->factory3='';
 
         // 将订单数据赋值给模板
         $this->assign('order',$order);
@@ -745,6 +739,7 @@ class Order extends Base
      */
     public function getOptions()
     {
+        $factory=Options::where('type','=','factory')->select();
         $shellType=Options::where('type','=','shell_type')->select();
         $shellColor=Options::where('type','=','shell_color')->select();
         $mos=Options::where('type','=','mos')->order('sn','asc')->select();
@@ -754,6 +749,7 @@ class Order extends Base
         $wires=Options::where('type','=','wires')->select();
 
         $res=[
+            'factory'=>$factory,
             'shell_type'=>$shellType,
             'shell_color'=>$shellColor,
             'mos'=>$mos,

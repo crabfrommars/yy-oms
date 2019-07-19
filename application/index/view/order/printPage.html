@@ -33,48 +33,52 @@
                 <tr>
                 </tr>
                 <tr>
-                    <td class="my-label">加工厂</td>
-                    <td class="my-value">{$order.factory}</td>
+                    <td class="my-label">订单类型</td>
+                    <td class="my-value">{$order.order_type}</td>
                     <td class="my-label">图纸编号</td>
                     <td class="my-value">{$order.drawing_func_wires_num}</td>
                     <td class="my-label">BOM编号</td>
                     <td class="my-value">{$order.bom_id}</td>
                 </tr>
                 <tr>
-                    <td class="my-label">当前进度</td>
-                    <td class="my-value">{$order.progress}</td>
                     <td class="my-label">产品类型</td>
                     <td class="my-value">{$order.pro_type}</td>
-                    <td class="my-label">订单类型</td>
-                    <td class="my-value">{$order.order_type}</td>
-                </tr>
-                <tr>
                     <td class="my-label">本单T6号</td>
                     <td class="my-value">{$order.this_t6}</td>
                     <td class="my-label">母单T6号</td>
                     <td class="my-value">{$order.mother_t6}</td>
-                    <td class="my-label">确认交期</td>
-                    <td class="my-value">{$order.delivery}</td>
                 </tr>
                 <tr>
                     <td class="my-label">业务员</td>
                     <td class="my-value">{$order.salesman}</td>
                     <td class="my-label">数量</td>
                     <td class="my-value">{$order.quantity}</td>
-                    <td class="my-label">期望交期</td>
+                    <td class="my-label">交期</td>
                     <td class="my-value">{$order.delivery}</td>
                 </tr>
                 <tr>
                     <td class="my-label">客户名</td>
                     <td class="my-value" colspan="2">{$order.customer}</td>
-                    <td class="my-label">序列号</td>
+                    <td class="my-label">型号</td>
+                    <td class="my-value" colspan="2">{$order.model}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">加工厂1</td>
+                    <td class="my-value" colspan="2">{$order.factory}</td>
+                    <td class="my-label">序列号1</td>
                     <td class="my-value" colspan="2">{$order.serial_start}-{$order.serial_end}</td>
                 </tr>
                 <tr>
-                    <td class="my-label">客户/订单型号</td>
-                    <td class="my-value" colspan="2">{$order.model}</td>
-                    <td class="my-label">生产/归档型号</td>
-                    <td class="my-value" colspan="2">{$order.model}</td>
+                    <td class="my-label">加工厂2</td>
+                    <td class="my-value" colspan="2">{$order.factory2}</td>
+                    <td class="my-label">序列号2</td>
+                    <td class="my-value" colspan="2">{$order.serial_start2}-{$order.serial_end2}</td>
+                </tr>
+                <tr>
+                    <td class="my-label">加工厂3</td>
+                    <td class="my-value" colspan="2">{$order.factory3}</td>
+                    <td class="my-label">序列号3</td>
+                    <td class="my-value" colspan="2">{$order.serial_start3}-{$order.serial_end3}</td>
                 </tr>
                 <tr>
                     <td class="my-label">外壳类型</td>

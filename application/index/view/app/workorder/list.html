@@ -90,19 +90,6 @@
     {{# } }}
     </div>
 </script>
-<script type="text/html" id="factory">
-    {{# if(d.factory === 'A'){ }}
-    <span>宇晗</span>
-    {{# }else if(d.factory === 'B'){ }}
-    <span>艾芯</span>
-    {{# }else if(d.factory === 'C'){ }}
-    <span>瑞研</span>
-    {{# }else if(d.factory === 'D'){ }}
-    <span>晟楠</span>
-    {{# }else if(d.factory === 'Y'){ }}
-    <span>宇扬</span>
-    {{# } }}
-</script>
 <script type="text/html" id="current_roleTpl">
     {{# let str='{$Think.session.roles}'; }}
     {{# let arr=str.split(' '); }}
@@ -144,11 +131,14 @@
         base: '/static/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'workorder', 'table'], function () {
-        var ws=new WebSocket('ws://127.0.0.1:8282');
+    }).use(['index', 'workorder', 'table','element'], function () {
+        // var ws = new WebSocket('ws://127.0.0.1:8282');  // 线下测试
+        // var ws = new WebSocket('wss://oms.yuyangking.com:8282');  // 线上域名
+        var ws = new WebSocket('wss://101.37.145.204:8282');  // 线上IP
         let $ = layui.$
             , form = layui.form
-            , table = layui.table;
+            , table = layui.table
+            , element=layui.element;
 
         // let timer=setInterval(function () {
         //     table.reload('LAY-app-system-order');
@@ -225,6 +215,7 @@
             });
         });
 
+        // 监听排序
         table.on('sort(LAY-app-system-order)',function (obj) {
             // console.log(obj.type);
            table.reload('LAY-app-system-order',{
@@ -234,6 +225,50 @@
                    , order:obj.type
                }
            });
+        });
+
+        //监听行事件
+        table.on('rowDouble(mother_orders)',function(obj){
+            let data = obj.data;
+            let win=layer.open({
+                type: 2
+                , title: '编辑订单'
+                , content: '/index/order/listform?id='+data.id
+                , area: ['500px', '450px']
+                , maxmin:true
+            });
+            layer.full(win);
+        });
+
+        table.render({
+            elem: '#LAY-app-system-order'
+            , autoSort:false
+            , url: '/index/order/order'
+            , cols: [[
+                {field: 'id', sort:true, title: '编号', width: 65, fixed: 'left', align: 'center'},
+                {field: 'this_t6', title: 'T6号', width: 65, align: 'center'},
+                {field: 'factories', title: '工厂', width:70, align: 'center'},
+                {field: 'order_type', title: '类型', width: 75, align: 'center', templet: '#order_typeTpl'},
+                {field: 'progress',event:'record', style:'cursor: pointer', title: '进度', width: 150, align: 'center', templet: '#progressTpl'},
+                {field: 'customer', title: '客户', width:180  },
+                {field: 'salesman', title: '业务员', width: 75, align: 'center'},
+                {field: 'model', title: '型号', width: 180},
+                {field: 'quantity', title: '数量', width: 65, align: 'center'},
+                {field: 'current_content', title: '当前工作',width:120, align:'left'},
+                {title: '当前人员', width: 95, align: 'center',fixed:'right',templet:'#current_roleTpl'},
+                {title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-system-order'}
+            ]]
+            , page: {
+                limit:20
+                , limits:[10,20,30,40,50]
+                , groups:5
+            }
+            , text: {
+                none:'无数据'
+            }
+            , done: function () {
+                element.render('progress')
+            }
         });
 
         table.render({

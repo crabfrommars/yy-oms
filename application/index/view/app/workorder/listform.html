@@ -34,7 +34,7 @@
     </div>
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">序列号</label>
+            <label class="layui-form-label">序列号1</label>
             <div class="layui-input-inline" style="width: 150px">
                 <input id="serial_start" name="serial_start" type="text" class="layui-input" readonly>
             </div>
@@ -42,22 +42,65 @@
             <div class="layui-input-inline" style="width: 150px">
                 <input id="serial_end" name="serial_end" type="text" class="layui-input" readonly>
             </div>
+            <div class="layui-input-inline" style="width: 80px">
+                <input id="num1" name="num1" type="number" class="layui-input" placeholder="数量">
+            </div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label" style="color: #FF5722;">加工厂</label>
+            <label class="layui-form-label" style="color: #FF5722;">加工厂1</label>
             <div class="layui-input-inline">
                 <select id="factory" name="factory" lay-filter="factory">
-                    <option value="">--未选择--</option>
-                    <option value="A">(A)杭州宇晗科技有限公司</option>
-                    <option value="B">(B)山东艾芯电子科技有限公司</option>
-                    <option value="C">(C)杭州瑞研电子科技有限公司</option>
-                    <option value="D">(D)江苏晟楠电子科技股份有限公司</option>
-                    <option value="E">(E)杭州浪迪科技有限公司</option>
-                    <option value="Y">(Y)杭州宇扬科技股份有限公司</option>
+
                 </select>
             </div>
+        </div>
+        <div class="layui-inline">
+            <input id="createProLst" type="button" class="layui-btn layui-btn-sm">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">序列号2</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input id="serial_start2" name="serial_start2" type="text" class="layui-input" readonly>
+            </div>
+            <div class="layui-form-mid">-</div>
+            <div class="layui-input-inline" style="width: 150px">
+                <input id="serial_end2" name="serial_end2" type="text" class="layui-input" readonly>
+            </div>
+            <div class="layui-input-inline" style="width: 80px">
+                <input id="num2" name="num2" type="number" class="layui-input" placeholder="数量">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="color: #FF5722;">加工厂2</label>
             <div class="layui-input-inline">
-                <input id="createProLst" type="button" class="layui-btn layui-btn-danger">
+                <select id="factory2" name="factory2" lay-filter="factory2">
+
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">序列号3</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input id="serial_start3" name="serial_start3" type="text" class="layui-input" readonly>
+            </div>
+            <div class="layui-form-mid">-</div>
+            <div class="layui-input-inline" style="width: 150px">
+                <input id="serial_end3" name="serial_end3" type="text" class="layui-input" readonly>
+            </div>
+            <div class="layui-input-inline" style="width: 80px">
+                <input id="num3" name="num3" type="number" class="layui-input" placeholder="数量">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="color: #FF5722;">加工厂3</label>
+            <div class="layui-input-inline">
+                <select id="factory3" name="factory3" lay-filter="factory3">
+
+                </select>
             </div>
         </div>
     </div>
@@ -606,11 +649,14 @@
     }).use(['index', 'form'], function () {
         let form = layui.form
             , $ = layui.$
+            , admin=layui.admin
             , index = parent.layer.getFrameIndex(window.name);
+        var factoryNum=1;
 
         // 生成产品列表
         function createProLst(){
             layer.confirm('确定吗？',{icon:0},function (index) {
+
                 let myModel=$("#model").val()
                     , typeCode=subModel(myModel).typeCode
                     , myType=subModel(myModel).type;
@@ -619,9 +665,17 @@
                     url:'/index/product/createLst'
                     , data:{
                         'factory':$("#factory").val()
+                        , 'factory2':$("#factory2").val()
+                        , 'factory3':$("#factory3").val()
                         , 'serial_start':$("#serial_start").val()
                         , 'serial_end':$("#serial_end").val()
-                        , 'quantity':$("#quantity").val()
+                        , 'serial_start2':$("#serial_start2").val()
+                        , 'serial_end2':$("#serial_end2").val()
+                        , 'serial_start3':$("#serial_start3").val()
+                        , 'serial_end3':$("#serial_end3").val()
+                        , 'num1':$("#num1").val()
+                        , 'num2':$("#num2").val()
+                        , 'num3':$("#num3").val()
                         , 'order_sn':$("#orderId").val()
                         , 'T6_sn':$("#orderId").val()
                         , 'type':myType
@@ -684,16 +738,21 @@
             $("#createProLst").addClass("layui-btn-disabled");
             $("#createProLst").attr("disabled","disabled");
             $("#factory").attr("disabled","disabled");
+            $("#factory2").attr("disabled","disabled");
+            $("#factory3").attr("disabled","disabled");
+            $("#num1").attr("readonly","readonly");
+            $("#num2").attr("readonly","readonly");
+            $("#num3").attr("readonly","readonly");
             $("#quantity").attr("readonly","readonly");
             form.render(null, 'layuiadmin-form-order');
         }
 
         // 设定序列号
-        function setSerial(fCode) {
+        function setSerial(fCode,num) {
             let serialStart='';
             let serialEnd='';
             if (fCode !== null && fCode !== ''){
-                let date=new Date();
+                // let date=new Date();
                 // let year=date.getFullYear().toString();
                 // 获取当前年份的最后一位
                 // let y=year.substr(year.length-1,1);
@@ -703,7 +762,7 @@
                 let orderId=preFixZero($("#orderId").val(),5);
 
                 // 获取当前订单数量
-                let num=$("#quantity").val();
+                // let num=$("#quantity").val();
 
                 // 设定起始序列号
                 // serialStart=fCode+y+orderId+preFixZero(1,4);
@@ -714,8 +773,12 @@
                 serialEnd=fCode+orderId+preFixZero(num,4);
             }
 
-            $("#serial_start").val(serialStart);
-            $("#serial_end").val(serialEnd);
+            let serial={
+                'serialStart':serialStart
+                , 'serialEnd':serialEnd
+            };
+
+            return serial;
         }
 
         // 获取选项列表
@@ -723,6 +786,14 @@
             $.ajax({
                 url: '/index/order/getOrderData?id={$order.id}',
                 success: (res) => {
+                    $("#factory").append("<option value=''>--未选择--</option>");
+                    $("#factory2").append("<option value=''>--未选择--</option>");
+                    $("#factory3").append("<option value=''>--未选择--</option>");
+                    for (let i = 0; i < res.options.factory.length; i++){
+                        $("#factory").append("<option value='"+res.options.factory[i].value+"'>"+res.options.factory[i].text+"</option>");
+                        $("#factory2").append("<option value='"+res.options.factory[i].value+"'>"+res.options.factory[i].text+"</option>");
+                        $("#factory3").append("<option value='"+res.options.factory[i].value+"'>"+res.options.factory[i].text+"</option>");
+                    }
                     for (let i = 0; i < res.options.shell_type.length; i++) {
                         $("#shell_type").append("<option value='" + res.options.shell_type[i].value + "'>" + res.options.shell_type[i].text + "</option>");
                     }
@@ -771,12 +842,18 @@
                     form.val("layuiadmin-form-order", {
                         "id": res.order.id
                         , "factory": res.order.factory
+                        , "factory2": res.order.factory2
+                        , "factory3": res.order.factory3
                         , "pro_type": res.order.pro_type
                         , "order_type": res.order.order_type
                         , "drawing_func_wires_num": res.order.drawing_func_wires_num
                         , "bom_id": res.order.bom_id
                         , "serial_start": res.order.serial_start
                         , "serial_end": res.order.serial_end
+                        , "serial_start2": res.order.serial_start2
+                        , "serial_end2": res.order.serial_end2
+                        , "serial_start3": res.order.serial_start3
+                        , "serial_end3": res.order.serial_end3
                         , "this_t6": res.order.this_t6
                         , "mother_t6": res.order.mother_t6
                         , "review_id": res.order.review_id
@@ -785,6 +862,9 @@
                         , "salesman": res.order.salesman
                         , "model": res.order.model
                         , "quantity": res.order.quantity
+                        , "num1": res.order.num1
+                        , "num2": res.order.num2
+                        , "num3": res.order.num3
                         , "delivery": res.order.delivery
                         , "shell_type": res.order.shell_type
                         , "shell_color": res.order.shell_color
@@ -836,73 +916,225 @@
                 }
             })
         }
+        
+        // 数组查重
+        function checkRepeat(array) {
+            let n={}
+                , r=[]
+                , res=true;
+
+            for (let i=0;i<array.length;i++){
+                if (!n[array[i]] || array[i]=='' || array[i]==null){
+                    n[array[i]]=true;
+                    r.push(array[i]);
+                }
+            }
+            
+            if (r.length != array.length){
+                res=false;
+            }
+
+            return res;
+        };
+
+        // 检查表单
+        function checkField() {
+            let num1=Number($("#num1").val())
+                , num2=Number($("#num2").val())
+                , num3=Number($("#num3").val())
+                , quantity=Number($("#quantity").val())
+                , factory1=$("#factory").val()
+                , factory2=$("#factory2").val()
+                , factory3=$("#factory3").val()
+                , factoryArr=[factory1,factory2,factory3]
+                , res={};
+
+            // 有任意加工厂被选中
+            if ((factory1!=''&&factory1!=null)||(factory2!=''&&factory2!=null)||(factory3!=''&&factory3!=null)){
+                if (!checkRepeat(factoryArr)) {  // 多选了相同的工厂
+                    res={
+                        'code':1
+                        , 'msg':'多选了相同的加工厂，请检查'
+                    }
+                } else if ((num1+num2+num3) != quantity) {  // 数量错误
+                    res={
+                        'code':2
+                        , 'msg':'加工数量总和与订单数量不符，请检查'
+                    }
+                } else if (((factory1!=''&&factory1!=null)&&num1<=0)||((factory2!=''&&factory2!=null)&&num2<=0)||((factory3!=''&&factory3!=null)&&num3<=0)) {
+                    res={
+                        'code':3
+                        , 'msg':'加工数量不可小于1，请检查'
+                    }
+                } else {
+                    res={
+                        'code':0
+                        , 'msg':''
+                    }
+                }
+            } else if ((factory1==''||factory1==null)&&(factory2==''||factory2==null)&&(factory3==''||factory3==null)) {
+                res={
+                    'code':0
+                    , 'msg':''
+                }
+            }
+
+            return res;
+        }
 
         setRepeat();
         getValues();
 
         $("#createProLst").click(function () {
-            createProLst()
+            let checkRes=checkField();
+            if (checkRes.code != 0){
+                layer.open({
+                    type:0
+                    , title:false
+                    , closeBtn:0
+                    , content:checkRes.msg
+                    , anim:6
+                    , icon:2
+                    , btn:'知道了'
+                })
+            }else {
+                createProLst()
+            }
         });
 
-        // 监听加工厂选择
+        // 监听加工厂1选择
         form.on('select(factory)',function (data) {
-            setSerial(data.value);
+            let num2=Number($("#num2").val());
+            let num3=Number($("#num3").val());
+
+            if (data.value != null && data.value != ''){
+                $("#num1").val($("#quantity").val()-(num2+num3));
+            }else {
+                $("#num1").val('');
+            }
+
+            let serial=setSerial(data.value,$("#num1").val());
+            $("#serial_start").val(serial.serialStart);
+            $("#serial_end").val(serial.serialEnd);
         });
 
-        // 监听数量变化
-        $("#quantity").bind('input propertychange',function () {
+        // 监听加工厂2选择
+        form.on('select(factory2)',function (data) {
+            let num1=Number($("#num1").val());
+            let num3=Number($("#num3").val());
+
+            if (data.value != null && data.value != ''){
+                $("#num2").val($("#quantity").val()-(num1+num3));
+            }else {
+                $("#num2").val('');
+            }
+
+            let serial=setSerial(data.value,$("#num2").val());
+            $("#serial_start2").val(serial.serialStart);
+            $("#serial_end2").val(serial.serialEnd);
+        });
+
+        // 监听加工厂3选择
+        form.on('select(factory3)',function (data) {
+            let num1=Number($("#num1").val());
+            let num2=Number($("#num2").val());
+
+            if (data.value != null && data.value != ''){
+                $("#num3").val($("#quantity").val()-(num1+num2));
+            }else {
+                $("#num3").val('');
+            }
+
+            let serial=setSerial(data.value,$("#num3").val());
+            $("#serial_start3").val(serial.serialStart);
+            $("#serial_end3").val(serial.serialEnd);
+        });
+
+        // 监听数量1变化
+        $("#num1").bind('input propertychange',function () {
             let fCode=$("#factory").val();
-            setSerial(fCode);
+            let serial=setSerial(fCode,$("#num1").val());
+            $("#serial_start").val(serial.serialStart);
+            $("#serial_end").val(serial.serialEnd);
+        });
+
+        // 监听数量2变化
+        $("#num2").bind('input propertychange',function () {
+            let fCode=$("#factory2").val();
+            let serial=setSerial(fCode,$("#num2").val());
+            $("#serial_start2").val(serial.serialStart);
+            $("#serial_end2").val(serial.serialEnd);
+        });
+
+        // 监听数量3变化
+        $("#num3").bind('input propertychange',function () {
+            let fCode=$("#factory3").val();
+            let serial=setSerial(fCode,$("#num3").val());
+            $("#serial_start3").val(serial.serialStart);
+            $("#serial_end3").val(serial.serialEnd);
         });
 
         form.on('submit(submit)', function (data) {
-            $.ajax({
-                url: '/index/order/canEdt'
-                , data: {
-                    'progress': '{$order.progress}'
-                }
-                , type: 'POST'
-                , success: (res) => {
-                    if (res) {
-                        let field = data.field; //获取提交的字段
-
-                        let arr1 = [];
-                        let arr2 = [];
-                        let arr3 = [];
-
-                        $(":checkbox[name='normal_func']:checked").each(function () {
-                            arr1.push($(this).val())
-                        });
-                        $(":checkbox[name='special_func']:checked").each(function () {
-                            arr2.push($(this).val())
-                        });
-                        $(":checkbox[name='wires']:checked").each(function () {
-                            arr3.push($(this).val())
-                        });
-
-                        let v1 = arr1.length > 0 ? arr1.join(',') : "";
-                        let v2 = arr2.length > 0 ? arr2.join(',') : "";
-                        let v3 = arr3.length > 0 ? arr3.join(',') : "";
-
-                        field.normal_func = v1;
-                        field.special_func = v2;
-                        field.wires = v3;
-
-                        $.ajax({
-                            url: "/index/order/update"
-                            , data: field
-                            , type: 'POST'
-                            , success: function (data) {
-                                layer.msg(data.message);
-                                parent.layui.table.reload('LAY-app-system-order'); //数据刷新
-                            }
-                        });
-                    } else {
-                        layer.msg('你当前无权更改', {icon: 2});
+            let checkRes=checkField();
+            if (checkRes.code != 0){
+                console.log(checkRes);
+                layer.open({
+                    type:0
+                    , title:false
+                    , closeBtn:0
+                    , content:checkRes.msg
+                    , anim:6
+                    , icon:2
+                    , btn:'知道了'
+                })
+            } else {
+                $.ajax({
+                    url: '/index/order/canEdt'
+                    , data: {
+                        'progress': '{$order.progress}'
                     }
-                }
-            });
+                    , type: 'POST'
+                    , success: (res) => {
+                        if (res) {
+                            let field = data.field; //获取提交的字段
 
+                            let arr1 = [];
+                            let arr2 = [];
+                            let arr3 = [];
+
+                            $(":checkbox[name='normal_func']:checked").each(function () {
+                                arr1.push($(this).val())
+                            });
+                            $(":checkbox[name='special_func']:checked").each(function () {
+                                arr2.push($(this).val())
+                            });
+                            $(":checkbox[name='wires']:checked").each(function () {
+                                arr3.push($(this).val())
+                            });
+
+                            let v1 = arr1.length > 0 ? arr1.join(',') : "";
+                            let v2 = arr2.length > 0 ? arr2.join(',') : "";
+                            let v3 = arr3.length > 0 ? arr3.join(',') : "";
+
+                            field.normal_func = v1;
+                            field.special_func = v2;
+                            field.wires = v3;
+
+                            $.ajax({
+                                url: "/index/order/update"
+                                , data: field
+                                , type: 'POST'
+                                , success: function (data) {
+                                    layer.msg(data.message);
+                                    parent.layui.table.reload('LAY-app-system-order'); //数据刷新
+                                }
+                            });
+                        } else {
+                            layer.msg('你当前无权更改', {icon: 2});
+                        }
+                    }
+                });
+            }
             // layer.close(index);
         });
 

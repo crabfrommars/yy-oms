@@ -199,7 +199,9 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'util'], function () {
-        var ws = new WebSocket('ws://127.0.0.1:8282');
+        // var ws = new WebSocket('ws://127.0.0.1:8282');  // 线下测试
+        // var ws = new WebSocket('wss://oms.yuyangking.com:8282');  // 线上域名
+        var ws = new WebSocket('wss://101.37.145.204:8282');  // 线上IP
         let util = layui.util
             , $ = layui.$
             , myTip = 1

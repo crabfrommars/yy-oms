@@ -4,6 +4,7 @@
 namespace app\wxpay\controller;
 use app\common\controller\Base;
 use think\facade\Request;
+use app\common\model\WxUser;
 
 class WeChat extends Base
 {
@@ -23,11 +24,27 @@ class WeChat extends Base
 
         $this->url='https://api.weixin.qq.com/sns/jscode2session?appid='.$this->appid.'&secret='.$this->appsecret.'&js_code='.$code.'&grant_type=authorization_code';
         $res=file_get_contents($this->url);
-        return json_encode($res);
+        return $res;
+    }
+
+    public function saveUser()
+    {
+        $data=Request::request();
+//        $data=['openid'=>'otAV85RXO27egM4DcKRF4IHGXxWo'];
+        if (!WxUser::where('openid',$data['openid'])->find()){
+            $user=WxUser::create($data);
+        }else{
+            $user=WxUser::where('openid',$data['openid'])->find();
+        }
+//        $res=[
+//            'user'=>$user
+//        ];
+        return $user;
     }
 
     /**
      * 下单
+     * @return false|string
      */
     public function placeOrder()
     {

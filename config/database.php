@@ -61,7 +61,7 @@ return [
     // 断线标识字符串
     'break_match_str' => [],
 
-    // 其他数据库配置
+    // 产品列表数据库配置
     'other1'=>[
         // 数据库类型
         'type' => 'mysql',
@@ -69,6 +69,22 @@ return [
         'hostname' => '127.0.0.1',
         // 数据库名
         'database' => 'newdata',
+        // 数据库用户名
+        'username' => 'root',
+        // 数据库密码
+        'password' => '168168',
+        // 数据库编码
+        'charset' => 'utf8',
+    ],
+
+    // 微信用户数据库配置
+    'wx'=>[
+        // 数据库类型
+        'type' => 'mysql',
+        // 服务器地址
+        'hostname' => '127.0.0.1',
+        // 数据库名
+        'database' => 'wx',
         // 数据库用户名
         'username' => 'root',
         // 数据库密码

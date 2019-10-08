@@ -21,6 +21,7 @@ use think\facade\Session;
 use think\route\Rule;
 require_once '../GatewayClient/Gateway.php';
 use GatewayClient\Gateway;
+use traits\controller\Jump;
 
 class Order extends Base
 {
@@ -931,7 +932,7 @@ class Order extends Base
      */
     public function getRecycle()
     {
-        $list=orderModel::all();
+        $list=orderModel::onlyTrashed()->select();
         $count=count($list);
 
         //获取每页显示条数

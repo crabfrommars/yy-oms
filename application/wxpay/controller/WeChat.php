@@ -5,6 +5,7 @@ namespace app\wxpay\controller;
 use app\common\controller\Base;
 use think\facade\Request;
 use app\common\model\WxUser;
+use app\common\model\Guide;
 
 class WeChat extends Base
 {
@@ -21,9 +22,44 @@ class WeChat extends Base
     public function login()
     {
         $code=Request::request('code');
+        $name=Request::request('name');
+        if($name == 'bld'){
+            $appid='wx6337cae2bcb2c289';
+            $appsecret='d5790198600382ce10ea3252c9b79cb3';
+        }else{
+            $appid='wxb4e734264e6e7991';
+            $appsecret='c1e74bb9770d3f8387969673af540419';
+        }
 
-        $this->url='https://api.weixin.qq.com/sns/jscode2session?appid='.$this->appid.'&secret='.$this->appsecret.'&js_code='.$code.'&grant_type=authorization_code';
+        $this->url='https://api.weixin.qq.com/sns/jscode2session?appid='.$appid.'&secret='.$appsecret.'&js_code='.$code.'&grant_type=authorization_code';
         $res=file_get_contents($this->url);
+        return $res;
+    }
+
+    /**
+     * 用户鉴权
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function checkUser()
+    {
+        $data=Request::request();
+        $res=[];
+        $user=WxUser::where('openid',$data['openid'])->find();
+        if($user){
+            $res=[
+                'code'=>0,
+                'rank'=>$user->rank
+            ];
+        }else{
+            $res=[
+                'code'=>1,
+                'rank'=>null
+            ];
+        }
+
         return $res;
     }
 
@@ -42,6 +78,23 @@ class WeChat extends Base
         return $user;
     }
 
+    public function getPic()
+    {
+        $data=Request::request();
+        $res=[];
+        if($data['target'] == 'guide'){
+            $img1=Guide::where('id',1)->find();
+            $img2=Guide::where('id',2)->find();
+            $res=[
+//                'img1Src'=>'http://192.168.0.53'.$img1->address,
+//                'img2Src'=>'http://192.168.0.53'.$img2->address
+                'img1Src'=>'https://oms.yuyangking.com'.$img1->address,
+                'img2Src'=>'https://oms.yuyangking.com'.$img2->address
+            ];
+        }
+        return $res;
+    }
+
     /**
      * 下单
      * @return false|string
@@ -50,8 +103,16 @@ class WeChat extends Base
     {
 
         $code=Request::request('code'); // 微信登录code
-        $loginUrl='https://api.weixin.qq.com/sns/jscode2session?appid='.$this->appid  // 微信登录接口
-            .'&secret='.$this->appsecret
+        $name=Request::request('name');
+        if($name == 'bld'){
+            $appid='wx6337cae2bcb2c289';
+            $appsecret='d5790198600382ce10ea3252c9b79cb3';
+        }else{
+            $appid='wxb4e734264e6e7991';
+            $appsecret='c1e74bb9770d3f8387969673af540419';
+        }
+        $loginUrl='https://api.weixin.qq.com/sns/jscode2session?appid='.$appid  // 微信登录接口
+            .'&secret='.$appsecret
             .'&js_code='.$code
             .'&grant_type=authorization_code';
 //        $loginRes=file_get_contents($loginUrl);  // 登录结果
@@ -70,7 +131,7 @@ class WeChat extends Base
 
         // 将要签名的参数整合为数组
         $options=[
-            'appid'=>$this->appid
+            'appid'=>$appid
             , 'body'=>$body
             , 'device_info'=>$deviceInfo
             , 'nonce_str'=>$nonceStr
@@ -170,10 +231,16 @@ class WeChat extends Base
     private function order($transactionId)
     {
         $url='https://api.mch.weixin.qq.com/pay/orderquery';  // 查询订单接口
+        $name=Request::request('name');
+        if($name == 'bld'){
+            $appid='wx6337cae2bcb2c289';
+        }else{
+            $appid='wxb4e734264e6e7991';
+        }
 
         // 设定请求参数(不包含签名)
         $options=[
-            'appid'=>$this->appid
+            'appid'=>$appid
             , 'mch_id'=>$this->mchId
             , 'transaction_id'=>$transactionId
             , 'nonce_str'=>$this->getRandomStr(32)
